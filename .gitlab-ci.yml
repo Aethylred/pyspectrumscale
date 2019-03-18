@@ -1,0 +1,33 @@
+stages:
+    - pylint
+    - deploy
+
+pylint:
+    image: python:3.7
+    stage: pylint
+    script:
+        - pip install -r requirements.txt
+        - pip install pylint anybadge pylint-exit --quiet
+        - pylint --version
+        - (pylint pyfreeipa --rcfile=.pylintrc --output-format=text | tee pylint.txt) || pylint-exit $?
+        - score=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' pylint.txt)
+        - echo "Pylint score was $score"
+        - anybadge --value=$score --file=public/pylint.svg pylint
+    artifacts:
+        paths:
+            - public/pylint.svg
+    tags:
+        - docker
+
+# Gitlab pages service not yet configured
+#pages:
+#    stage: deploy
+#    script:
+#        - mkdir .public
+#        - cp -r * .public
+#        - mv .public public
+#    artifacts:
+#        paths:
+#            - public
+#    only:
+#        - master
