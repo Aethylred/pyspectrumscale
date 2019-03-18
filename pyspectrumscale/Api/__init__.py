@@ -218,3 +218,27 @@ class Api:
         """
         commandurl = "%s/info" % self._baseurl
         return self._get(commandurl)
+
+    def config(self):
+        """
+        @brief      { function_description }
+
+        @param      self    The object
+        @param      job_id  The job identifier
+
+        @return     { description_of_the_return_value }
+        """
+        commandurl = "%sconfig" % self._base_url
+        return self._get(commandurl)
+
+    def job(self, job_id: type = str):
+        """
+        @brief      { function_description }
+
+        @param      self    The object
+        @param      job_id  The job identifier
+
+        @return     { description_of_the_return_value }
+        """
+        commandurl = "%sjobs/%s"% (self._base_url, job_id)
+        return self._get(commandurl)
