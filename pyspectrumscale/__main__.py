@@ -46,8 +46,8 @@ def main():
                     CONFIG['scaleserver']['host']
                 )
             )
-            result = response.json()['result']
-            print(result['summary'])
+            result = response.json()
+            print(result)
         else:
             print(
                 'Failed to get info as %s in to %s from %s, reason "%s: %s"' %

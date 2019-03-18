@@ -88,123 +88,109 @@ class Api:
         )
 
     def _get(
-            self,
-            *dargs,
-            **kwargs
+        self,
+        commandurl: type=str,
+        params: Union[None, dict]=None
     ):
         """
         @brief This exposes a raw get method for the session
         """
-        response = self._session.get(
-            *dargs,
-            **kwargs
+        return self._session.get(
+            url=commandurl,
+            params=params
         )
-        return response
+
 
     def _post(
-            self,
-            *dargs,
-            **kwargs
+        self,
+        commandurl: type=str,
+        data: type=dict
     ):
         """
         @brief This exposes a raw post method for the internal session
         """
-        response = self._session.post(
-            *dargs,
-            **kwargs
+        return self._session.post(
+            url=commandurl,
+            data=json.dumps(data)
         )
-        return response
 
     def _put(
-            self,
-            *dargs,
-            **kwargs
+        self,
+        commandurl: type=str,
+        data: type=dict
     ):
         """
         @brief This exposes a raw put method for the internal session
         """
-        response = self._session.put(
-            *dargs,
-            **kwargs
-        )
-        return response
-
-    def get(
-            self,
-            method: str,
-            args=None,
-            params=None
-    ):
-        """
-        @brief This cleans up the args and parameters posts the and handles
-        the request and returns the response
-
-        @param self This object
-        @param method The Spectrum Scale Management API method to request
-        @param args A list of arguments to be passed to the method request
-        @param params A dictionary of parameters to be passed to the method request
-
-        @return a requests.Response object
-        """
-        if args:
-            if not isinstance(args, list):
-                args = [args]
-        else:
-            args = []
-
-        if not params:
-            params = {}
-
-        if self._version:
-            params.setdefault('version', self._version)
-
-        data = {
-            'id': 0,
-            'method': method,
-            'params': [args, params]
-        }
-
-        response = self._get(
-            self._session.url,
+        return self._session.put(
+            url=commandurl,
             data=json.dumps(data)
         )
 
-        return response
-
-    def prepget(
-            self,
-            method: str,
-            args=None,
-            params=None
+    def _prepget(
+        self,
+        commandurl: type=str,
+        data: type=dict
     ):
         """
         @brief This cleans up the args and parameters posts the and creates a prepared GET reques from the internal sessions object
 
         @param self This object
-        @param method The Spectrum Scale Management API method to request
-        @param args A list of arguments to be passed to the method request
-        @param params A dictionary of parameters to be passed to the method request
+        @param commandurl the URL for the request
+        @param data a dictionary of arguments and parameters
 
         @return a requests.Response object
         """
-        if args:
-            if not isinstance(args, list):
-                args = [args]
-        else:
-            args = []
-
-        if not params:
-            params = {}
-
-        data = {
-            'id': 0,
-            'method': method,
-            'params': [args, params]
-        }
 
         request = requests.Request(
             'GET',
-            self._session.url,
+            url=commandurl,
+            data=json.dumps(data)
+        )
+
+        return self._session.prepare_request(request)
+
+    def _preppush(
+        self,
+        commandurl: type=str,
+        data: type=dict
+    ):
+        """
+        @brief This cleans up the args and parameters posts the and creates a prepared PUSH reques from the internal sessions object
+
+        @param self This object
+        @param commandurl the URL for the request
+        @param data a dictionary of arguments and parameters
+
+        @return a requests.Response object
+        """
+
+        request = requests.Request(
+            'PUSH',
+            url=commandurl,
+            data=json.dumps(data)
+        )
+
+        return self._session.prepare_request(request)
+
+    def _prepput(
+        self,
+        commandurl: type=str,
+        data: type=dict
+    ):
+        """
+        @brief This cleans up the args and parameters posts the and creates a prepared PUT reques from the internal sessions object
+
+        @param self This object
+        @param commandurl the URL for the request
+        @param data a dictionary of arguments and parameters
+
+        @return a requests.Response object
+        """
+
+        request = requests.Request(
+            'PUT',
+            url=commandurl,
             data=json.dumps(data)
         )
 
@@ -230,4 +216,5 @@ class Api:
 
         @return     the requests.Response from the info request
         """
-        return self.get('info')
+        commandurl = "%s/info" % self._baseurl
+        return self._get(commandurl)
