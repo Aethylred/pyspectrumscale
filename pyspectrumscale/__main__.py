@@ -34,26 +34,27 @@ def main():
     if CONFIG['command'] == 'connectiontest':
         print(
             "Test connection to %s" %
-            CONFIG['ipaserver']['host']
+            CONFIG['scaleserver']['host']
         )
 
         response = scaleapi.info()
         if response.ok:
             print(
-                'Successfully pinged as %s on %s' %
+                'Successfully connected to as %s on %s' %
                 (
-                    CONFIG['ipaserver']['user'],
-                    CONFIG['ipaserver']['host']
+                    CONFIG['scaleserver']['user'],
+                    CONFIG['scaleserver']['host']
                 )
             )
             result = response.json()['result']
             print(result['summary'])
         else:
             print(
-                'Failed to ping as %s in to %s, reason "%s: %s"' %
+                'Failed to get info as %s in to %s from %s, reason "%s: %s"' %
                 (
-                    CONFIG['ipaserver']['user'],
-                    CONFIG['ipaserver']['host'],
+                    CONFIG['scaleserver']['user'],
+                    CONFIG['scaleserver']['host'],
+                    response.url,
                     response.status_code,
                     response.reason
                 )

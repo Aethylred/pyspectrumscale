@@ -202,11 +202,9 @@ if not os.path.isfile(ARGS.file):
         ARGS.file
     )
     with open(ARGS.file, 'w') as configfile:
-        yaml.dump(vars(CONFIG), configfile, default_flow_style=False)
+        yaml.dump(CONFIG, configfile, default_flow_style=False)
     sys.exit(0)
 
 # Set state from command line
 CONFIG['command'] = ARGS.command
 CONFIG['dryrun'] = ARGS.dryrun
-CONFIG['uid'] = ARGS.uid
-CONFIG['group'] = ARGS.group

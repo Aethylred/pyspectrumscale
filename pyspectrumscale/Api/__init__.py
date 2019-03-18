@@ -4,7 +4,6 @@ Spectrum Scale Management API
 """
 import json
 from typing import Union
-from datetime import datetime
 import requests
 import urllib3
 
@@ -13,7 +12,7 @@ class Api:
     @brief     Class to connect to the Spectrum Scale Management API
     """
 
-    def __init___(
+    def __init__(
             self,
             host: type=str,
             username: type=str,
@@ -23,7 +22,7 @@ class Api:
             verify_ssl: bool=True,
             verify_method: Union[bool, str]=True,
             verify_warnings: bool=True,
-            version: str='2.228',
+            version: str='v2',
             dryrun: bool=False
     ):
         """
@@ -61,6 +60,7 @@ class Api:
                 self._host
             )
             self.warnings.append(reason)
+            urllib3.disable_warnings()
 
         self._baseurl = (
             "%s://%s:%s/scalemgmt/%s" %
