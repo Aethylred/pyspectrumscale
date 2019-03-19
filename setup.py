@@ -13,7 +13,6 @@ setuptools.setup(
     author_email="aethylred@gmail.com",
     version="0.0.1",
     packages=setuptools.find_packages(),
-    data_files=[('test', ['test/README.md'])],
     license='Apache 2.0',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",

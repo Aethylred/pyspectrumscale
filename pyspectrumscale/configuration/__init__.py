@@ -55,6 +55,20 @@ def do_args():
     )
 
     parser.add_argument(
+        "--filesystem",
+        default=None,
+        dest='filesystem',
+        help="Specify a scale filesystem",
+    )
+
+    parser.add_argument(
+        "--fileset",
+        default=None,
+        dest='fileset',
+        help="Specify a scale filesystem, requires a filesystem",
+    )
+
+    parser.add_argument(
         '-s',
         '--server',
         default=None,
@@ -208,3 +222,5 @@ if not os.path.isfile(ARGS.file):
 # Set state from command line
 CONFIG['command'] = ARGS.command
 CONFIG['dryrun'] = ARGS.dryrun
+CONFIG['filesystem'] = ARGS.filesystem
+CONFIG['fileset'] = ARGS.fileset
