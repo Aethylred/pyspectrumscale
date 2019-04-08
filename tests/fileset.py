@@ -31,6 +31,9 @@ def main():
         dryrun=CONFIG['dryrun']
     )
 
+    if not CONFIG['filesystem']:
+        sys.exit("Requires a filesystem specified with --filesystem")
+
     if CONFIG['fileset']:
         response = scaleapi.fileset(
             CONFIG['filesystem'],

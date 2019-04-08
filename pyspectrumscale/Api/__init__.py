@@ -12,6 +12,9 @@ class Api:
     @brief     Class to connect to the Spectrum Scale Management API
     """
 
+    from ._filesystem import filesystem
+    from ._fileset import fileset
+
     def __init__(
             self,
             host: type=str,
@@ -241,55 +244,4 @@ class Api:
         @return     { description_of_the_return_value }
         """
         commandurl = "%sjobs/%s"% (self._baseurl, job_id)
-        return self._get(commandurl)
-
-    def filesystem(
-            self,
-            filesystem: Union[str, None]=None
-    ):
-        """
-        @brief      List all filesystems or return a specific filesystem
-
-        @param      self        The object
-        @param      filesystem  The filesystem name, default None, which returns all filesystems
-
-        @return     The request response as a Response.requests object
-        """
-        if filesystem:
-            commandurl = "%s/filesystems/%s" % (
-                self._baseurl,
-                filesystem
-            )
-        else:
-            commandurl = "%s/filesystems" % self._baseurl
-
-        print(commandurl)
-        return self._get(commandurl)
-
-    def fileset(
-            self,
-            filesystem: Union[str, None],
-            fileset: Union[str, None]=None
-    ):
-        """
-        @brief      List all filesystems or return a specific filesystem
-
-        @param      self        The object
-        @param      filesystem  The filesystem name, default None, which returns all filesystems
-
-        @return     The request response as a Response.requests object
-        """
-        if fileset:
-            commandurl = "%s/filesystems/%s/filesets/%s" % (
-                self._baseurl,
-                filesystem,
-                fileset
-            )
-        else:
-            commandurl = "%s/filesystems/%s/filesets" % (
-                self._baseurl,
-                filesystem
-            )
-
-        print(commandurl)
         return self._get(commandurl)
