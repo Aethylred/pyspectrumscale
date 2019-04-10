@@ -4,7 +4,7 @@ pyspectrumscale.api methods for filesystems
 from typing import Union
 
 
-def filesystem(
+def get_filesystem(
         self,
         filesystem: Union[str, None]=None
 ):
@@ -24,5 +24,4 @@ def filesystem(
     else:
         commandurl = "%s/filesystems" % self._baseurl
 
-    print(commandurl)
     return self._get(commandurl)
