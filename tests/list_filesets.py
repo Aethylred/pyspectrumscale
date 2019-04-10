@@ -31,14 +31,20 @@ def main():
         dryrun=CONFIG['dryrun']
     )
 
-    if CONFIG['filesystem']:
-        response = scaleapi.get_filesystem(
-            CONFIG['filesystem']
+    if not CONFIG['filesystem']:
+        sys.exit("Requires a filesystem specified with --filesystem")
+
+    if CONFIG['fileset']:
+        response = scaleapi.list_filesets(
+            filesystem=CONFIG['filesystem'],
+            fileset=CONFIG['fileset']
         )
     else:
-        response = scaleapi.get_filesystem()
+        response = scaleapi.list_filesets(
+            filesystem=CONFIG['filesystem']
+        )
 
-    print(json.dumps(response.json(), indent=4, sort_keys=True))
+    print(json.dumps(response, indent=4, sort_keys=True))
 
 
 if __name__ == "__main__":

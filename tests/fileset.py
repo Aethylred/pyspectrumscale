@@ -35,16 +35,28 @@ def main():
         sys.exit("Requires a filesystem specified with --filesystem")
 
     if CONFIG['fileset']:
-        response = scaleapi.fileset(
-            CONFIG['filesystem'],
-            CONFIG['fileset']
+        response = scaleapi.get_fileset(
+            filesystem=CONFIG['filesystem'],
+            fileset=CONFIG['fileset'],
+            allfields=True
+        )
+        filesets = scaleapi.fileset(
+            filesystem=CONFIG['filesystem'],
+            fileset=CONFIG['fileset'],
+            allfields=True
         )
     else:
-        response = scaleapi.fileset(
-            CONFIG['filesystem']
+        response = scaleapi.get_fileset(
+            filesystem=CONFIG['filesystem'],
+            allfields=True
+        )
+        filesets = scaleapi.fileset(
+            filesystem=CONFIG['filesystem'],
+            allfields=True
         )
 
     print(json.dumps(response.json(), indent=4, sort_keys=True))
+    print(json.dumps(filesets, indent=4, sort_keys=True))
 
 
 if __name__ == "__main__":
