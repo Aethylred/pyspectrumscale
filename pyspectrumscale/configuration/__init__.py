@@ -69,6 +69,13 @@ def do_args():
     )
 
     parser.add_argument(
+        "--path",
+        default=None,
+        dest='path',
+        help="Specify a scale filesystem, requires a filesystem",
+    )
+
+    parser.add_argument(
         '-s',
         '--server',
         default=None,
@@ -224,3 +231,4 @@ CONFIG['command'] = ARGS.command
 CONFIG['dryrun'] = ARGS.dryrun
 CONFIG['filesystem'] = ARGS.filesystem
 CONFIG['fileset'] = ARGS.fileset
+CONFIG['path'] = ARGS.path
