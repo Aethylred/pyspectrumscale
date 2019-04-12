@@ -117,12 +117,13 @@ class Api:
                 self._baseaddress +
                 response.json()['paging']['baseUrl']
             )
-            print(commandurl)
 
             params = {
-                'fields': response.json()['paging']['fields'],
                 'lastId': response.json()['paging']['lastId']
             }
+
+            if 'fields' in response.json()['paging']:
+                params['fields'] = response.json()['paging']['fields']
 
             nextresponse = self._get(
                 commandurl=commandurl,
