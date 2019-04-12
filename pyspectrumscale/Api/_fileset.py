@@ -34,7 +34,6 @@ def get_fileset(
             filesystem
         )
 
-    # Do somethign about paged responses here!
     return self._get(
         commandurl,
         params=params

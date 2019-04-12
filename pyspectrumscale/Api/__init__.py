@@ -66,12 +66,19 @@ class Api:
             self.warnings.append(reason)
             urllib3.disable_warnings()
 
-        self._baseurl = (
-            "%s://%s:%s/scalemgmt/%s" %
+        self._baseaddress = (
+            "%s://%s:%s" %
             (
                 self._protocol,
                 self._host,
-                self._port,
+                self._port
+            )
+        )
+
+        self._baseurl = (
+            "%s/scalemgmt/%s" %
+            (
+                self._baseaddress,
                 self._version
             )
         )
@@ -99,10 +106,44 @@ class Api:
         """
         @brief This exposes a raw get method for the session
         """
-        return self._session.get(
+        response = self._session.get(
             url=commandurl,
             params=params
         )
+
+        # Do something about paged responses here
+        while 'paging' in response.json():
+            commandurl = (
+                self._baseaddress +
+                response.json()['paging']['baseUrl']
+            )
+            print(commandurl)
+
+            params = {
+                'fields': response.json()['paging']['fields'],
+                'lastId': response.json()['paging']['lastId']
+            }
+
+            nextresponse = self._get(
+                commandurl=commandurl,
+                params=params
+            )
+
+            mockjson = {}
+            for key in nextresponse.json():
+                if key in ['paging', 'status']:
+                    mockjson[key] = nextresponse.json()[key]
+                else:
+                    if key in response.json():
+                        mockjson[key] = nextresponse.json()[key] + response.json()[key]
+                    else:
+                        mockjson[key] = nextresponse.json()[key]
+
+            response = nextresponse
+            response._content = bytes(json.dumps(mockjson, indent=2, sort_keys=True), encoding='utf-8')
+
+
+        return response
 
 
     def _post(

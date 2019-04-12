@@ -40,23 +40,24 @@ def main():
             fileset=CONFIG['fileset'],
             allfields=True
         )
-        filesets = scaleapi.fileset(
-            filesystem=CONFIG['filesystem'],
-            fileset=CONFIG['fileset'],
-            allfields=True
-        )
+        # filesets = scaleapi.fileset(
+        #     filesystem=CONFIG['filesystem'],
+        #     fileset=CONFIG['fileset'],
+        #     allfields=True
+        # )
     else:
         response = scaleapi.get_fileset(
             filesystem=CONFIG['filesystem'],
             allfields=True
         )
-        filesets = scaleapi.fileset(
-            filesystem=CONFIG['filesystem'],
-            allfields=True
-        )
+        # filesets = scaleapi.fileset(
+        #     filesystem=CONFIG['filesystem'],
+        #     allfields=True
+        # )
 
-    print(json.dumps(response.json(), indent=4, sort_keys=True))
-    print(json.dumps(filesets, indent=4, sort_keys=True))
+    print(json.dumps(response.json(), indent=2, sort_keys=True))
+    #print(json.dumps(response._content, indent=2, sort_keys=True))
+    #print(json.dumps(filesets, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
