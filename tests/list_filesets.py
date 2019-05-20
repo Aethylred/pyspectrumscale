@@ -44,7 +44,7 @@ def main():
             filesystem=CONFIG['filesystem']
         )
 
-    print(json.dumps(response, indent=4, sort_keys=True))
+    print(json.dumps(response, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
