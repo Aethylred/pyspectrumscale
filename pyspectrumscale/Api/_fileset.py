@@ -47,7 +47,7 @@ def fileset(
         allfields: Union[bool, None]=None
 ):
     """
-    @brief      This methdo returns the list of matching filesets as JSON with the response stripped away.
+    @brief      This method returns the list of matching filesets as JSON with the response stripped away.
 
     @param      self        The object
     @param      filesystem  The filesystem
