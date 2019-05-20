@@ -16,7 +16,7 @@ def main():
     """
 
     if CONFIG['command'] == 'dumpconfig':
-        print(json.dumps(CONFIG, indent=4, sort_keys=True))
+        print(json.dumps(CONFIG, indent=2, sort_keys=True))
         sys.exit(0)
 
     # Define API session
@@ -38,7 +38,7 @@ def main():
     else:
         response = scaleapi.get_filesystem()
 
-    print(json.dumps(response.json(), indent=4, sort_keys=True))
+    print(json.dumps(response.json(), indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
