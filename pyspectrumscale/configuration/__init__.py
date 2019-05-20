@@ -57,6 +57,7 @@ def do_args():
     parser.add_argument(
         "--filesystem",
         default=None,
+        nargs='+',
         dest='filesystem',
         help="Specify a scale filesystem",
     )
@@ -64,6 +65,7 @@ def do_args():
     parser.add_argument(
         "--fileset",
         default=None,
+        nargs='+',
         dest='fileset',
         help="Specify a scale filesystem, requires a filesystem",
     )

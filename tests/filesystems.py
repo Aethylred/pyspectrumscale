@@ -32,15 +32,13 @@ def main():
     )
 
     if CONFIG['filesystem']:
-        response = scaleapi.get_filesystem(
+        response = scaleapi.filesystems(
             CONFIG['filesystem']
         )
-        fs = scaleapi.filesystem(CONFIG['filesystem'])
-        print(json.dumps(fs, indent=2, sort_keys=True))
     else:
-        response = scaleapi.get_filesystem()
+        response = scaleapi.filesystems()
 
-    print(json.dumps(response.json(), indent=2, sort_keys=True))
+    print(json.dumps(response, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":

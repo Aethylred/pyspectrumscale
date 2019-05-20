@@ -12,7 +12,12 @@ class Api:
     @brief     Class to connect to the Spectrum Scale Management API
     """
 
-    from ._filesystem import get_filesystem
+    from ._filesystem import (
+        get_filesystem,
+        filesystem,
+        filesystems,
+        list_filesystems
+    )
     from ._fileset import get_fileset, fileset, list_filesets
     from ._acl import get_acl, acl, list_acls
 
