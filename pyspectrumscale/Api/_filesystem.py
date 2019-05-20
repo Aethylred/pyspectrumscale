@@ -60,12 +60,12 @@ def filesystem(
         filesystem: str
 ):
     """
-    @brief      List a filesystem as a JSON dict
+    @brief      List a specific filesystem as a JSON dict
 
     @param      self        The object
-    @param      filesystem  The filesystem name, default None, which returns all filesystems
+    @param      filesystem  The filesystem name
 
-    @return     Just the JSON content from the response
+    @return     Just the JSON content from the response as a dict
     """
 
     fs = None
@@ -81,12 +81,12 @@ def filesystems(
         filesystems: Union[str, list, None]=None
 ):
     """
-    @brief      List all filesystems or return a specific filesystem
+    @brief      List all filesystems or return a specific filesystem as a dict
 
     @param      self        The object
-    @param      filesystem  The filesystem name, default None, which returns all filesystems
+    @param      filesystem  The filesystem name, or list of names, default None, which returns all filesystems
 
-    @return     Just the JSON content from the response
+    @return     Just the JSON content from the response as a dict
     """
 
     fslist = []
