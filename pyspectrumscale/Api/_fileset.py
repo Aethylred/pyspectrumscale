@@ -94,7 +94,7 @@ def filesets(
 
     if filesystems is None:
         response = self.filesets(
-            filesystems=self.get_filesystem(),
+            filesystems=self.list_filesystems(),
             filesets=filesets,
             allfields=allfields
         )
@@ -108,19 +108,21 @@ def filesets(
             if isinstance(fsresponse, list):
                 response += fsresponse
             else:
-                response.append(fsresponse)
+                if fsresponse is not None:
+                    response.append(fsresponse)
     else:
         if isinstance(filesets, list):
             for fs in filesets:
                 fsresponse = self.fileset(
                     filesystem=filesystems,
-                    fileset=filesets,
+                    fileset=fs,
                     allfields=allfields
                 )
                 if isinstance(fsresponse, list):
                     response += fsresponse
                 else:
-                    response.append(fsresponse)
+                    if fsresponse is not None:
+                        response.append(fsresponse)
         else:
             fsresponse = self.fileset(
                 filesystem=filesystems,
@@ -130,11 +132,15 @@ def filesets(
             if isinstance(fsresponse, list):
                 response += fsresponse
             else:
-                response.append(fsresponse)
+                if fsresponse is not None:
+                    response.append(fsresponse)
 
     if isinstance(response, list):
         if len(response) == 1:
             response = response[0]
+
+    if not response:
+        response = None
 
     return response
 

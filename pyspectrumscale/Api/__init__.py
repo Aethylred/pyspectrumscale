@@ -18,7 +18,12 @@ class Api:
         filesystems,
         list_filesystems
     )
-    from ._fileset import get_fileset, fileset, filesets, list_filesets
+    from ._fileset import (
+        get_fileset,
+        fileset,
+        filesets,
+        list_filesets
+    )
     from ._acl import get_acl, acl, list_acls
 
     def __init__(
