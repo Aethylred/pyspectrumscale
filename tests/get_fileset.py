@@ -38,18 +38,18 @@ def main():
         sys.exit("get_fileset requires only one filesystem")
 
     if CONFIG['fileset'] is None:
-        response = scaleapi.fileset(
+        response = scaleapi.get_fileset(
             filesystem=CONFIG['filesystem'][0],
             allfields=True
-        )
+        ).json()
     else:
         if len(CONFIG['fileset']) > 1:
             sys.exit("get_fileset requires only one fileset")
-        response = scaleapi.fileset(
+        response = scaleapi.get_fileset(
             filesystem=CONFIG['filesystem'][0],
             fileset=CONFIG['fileset'][0],
             allfields=True
-        )
+        ).json()
 
     #print(json.dumps(response.json(), indent=2, sort_keys=True))
     #print(json.dumps(response._content, indent=2, sort_keys=True))

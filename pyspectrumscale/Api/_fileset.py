@@ -2,6 +2,7 @@
 Methods for pyspectrumscale.Api that deal with filesets
 """
 from typing import Union
+import json
 
 
 def get_fileset(
@@ -18,11 +19,12 @@ def get_fileset(
 
     @return     The request response as a Response.requests object
     """
+
     params = {}
     if allfields is not None:
         params['fields'] = ':all:'
 
-    if fileset:
+    if fileset is not None:
         commandurl = "%s/filesystems/%s/filesets/%s" % (
             self._baseurl,
             filesystem,
@@ -42,12 +44,12 @@ def get_fileset(
 
 def fileset(
         self,
-        filesystem: Union[str, None],
+        filesystem: str,
         fileset: Union[str, None]=None,
         allfields: Union[bool, None]=None
 ):
     """
-    @brief      This method returns the list of matching filesets as JSON with the response stripped away.
+    @brief      This method returns a specifc fileset from a specific filesystem as JSON with the response stripped away.
 
     @param      self        The object
     @param      filesystem  The filesystem
@@ -56,11 +58,79 @@ def fileset(
     @return     { description_of_the_return_value }
     """
 
-    response = self.get_fileset(
+    response = None
+    fsresponse = self.get_fileset(
         filesystem=filesystem,
         fileset=fileset,
         allfields=allfields
-    ).json()['filesets']
+    )
+
+    if fsresponse.ok:
+        if len(fsresponse.json()['filesets']) == 1:
+            response = fsresponse.json()['filesets'][0]
+        else:
+            response = fsresponse.json()['filesets']
+
+    return response
+
+
+def filesets(
+        self,
+        filesystems: Union[str, list, None]=None,
+        filesets: Union[str, list, None]=None,
+        allfields: Union[bool, None]=None
+):
+    """
+    @brief      This method returns the list of matching filesets as JSON with the response stripped away.
+
+    @param      self        The object
+    @param      filesystems  The filesystem
+    @param      fileset     The fileset
+
+    @return     { description_of_the_return_value }
+    """
+
+    response = []
+
+    if filesystems is None:
+        response = self.filesets(
+            filesystems=self.get_filesystem(),
+            filesets=filesets,
+            allfields=allfields
+        )
+    elif isinstance(filesystems, list):
+        for fs in filesystems:
+            fsresponse = self.filesets(
+                filesystems=fs,
+                filesets=filesets,
+                allfields=allfields
+            )
+            if isinstance(fsresponse, list):
+                response += fsresponse
+            else:
+                response.append(fsresponse)
+    else:
+        if isinstance(filesets, list):
+            for fs in filesets:
+                fsresponse = self.fileset(
+                    filesystem=filesystems,
+                    fileset=filesets,
+                    allfields=allfields
+                )
+                if isinstance(fsresponse, list):
+                    response += fsresponse
+                else:
+                    response.append(fsresponse)
+        else:
+            fsresponse = self.fileset(
+                filesystem=filesystems,
+                fileset=filesets,
+                allfields=allfields
+            )
+            if isinstance(fsresponse, list):
+                response += fsresponse
+            else:
+                response.append(fsresponse)
 
     if isinstance(response, list):
         if len(response) == 1:
