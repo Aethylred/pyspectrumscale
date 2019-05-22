@@ -34,7 +34,7 @@ def main():
     response = scaleapi.filesets(
         filesystems=CONFIG['filesystem'],
         filesets=CONFIG['fileset'],
-        allfields=True
+        everything=True
     )
 
     #print(json.dumps(response.json(), indent=2, sort_keys=True))

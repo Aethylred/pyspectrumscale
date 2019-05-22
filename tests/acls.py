@@ -31,28 +31,14 @@ def main():
         dryrun=CONFIG['dryrun']
     )
 
-    if not CONFIG['filesystem']:
-        sys.exit("Requires a filesystem specified with --filesystem")
+    response = scaleapi.acls(
+        filesystems=CONFIG['filesystem'],
+        paths=CONFIG['path'],
+        allfields=True
+    )
 
-    if len(CONFIG['filesystem']) > 1:
-        sys.exit("Requires only one filesystem specified with --filesystem")
+    print(json.dumps(response, indent=2, sort_keys=True))
 
-    if CONFIG['path']:
-        acl = scaleapi.acl(
-            filesystem=CONFIG['filesystem'][0],
-            path=CONFIG['path']
-        )
-    elif CONFIG['fileset']:
-        acl = scaleapi.acl(
-            filesystem=CONFIG['filesystem'][0],
-            fileset=CONFIG['path']
-        )
-    else:
-        acl = scaleapi.acl(
-            filesystem=CONFIG['filesystem'][0]
-        )
-
-    print(json.dumps(acl, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":

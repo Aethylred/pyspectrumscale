@@ -24,7 +24,12 @@ class Api:
         filesets,
         list_filesets
     )
-    from ._acl import get_acl, acl, list_acls
+    from ._acl import (
+        get_acl,
+        acl,
+        acls,
+        list_acls
+    )
 
     def __init__(
             self,

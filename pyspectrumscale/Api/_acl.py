@@ -9,7 +9,7 @@ from ._utils import truncsafepath
 def get_acl(
         self,
         filesystem: Union[str, None],
-        path: Union[str, None]=None,
+        path: Union[str, None],
         allfields: bool=False
 ):
     """
@@ -24,14 +24,11 @@ def get_acl(
     if allfields is not None:
         params['fields'] = ':all:'
 
-    if path:
-        commandurl = "%s/filesystems/%s/acl/%s" % (
-            self._baseurl,
-            filesystem,
-            truncsafepath(path)
-        )
-    else:
-        sys.exit("A path is required with --path")
+    commandurl = "%s/filesystems/%s/acl/%s" % (
+        self._baseurl,
+        filesystem,
+        truncsafepath(path)
+    )
 
     return self._get(
         commandurl,
@@ -43,6 +40,41 @@ def acl(
         self,
         filesystem: Union[str, None],
         path: Union[str, None]=None,
+        fileset: Union[str, None]=None,
+        allfields: bool=False
+):
+    """
+    @brief      { function_description }
+
+    @param      self        The object
+    @param      filesystem  The filesystem
+    @param      path        The path
+
+    @return     { description_of_the_return_value }
+    """
+
+    if fileset:
+        path = self.fileset(fileset)['config']['path']
+
+    print(path)
+    response = self.get_acl(
+        filesystem=filesystem,
+        path=path,
+        allfields=allfields
+    )
+
+    acl = None
+    if 'acl' in response.json():
+        acl = response.json()['acl']
+
+    return acl
+
+
+def acls(
+        self,
+        filesystems: Union[str, None]=None,
+        filesets: Union[str, None]=None,
+        paths: Union[str, None]=None,
         allfields: bool=False
 ):
     """

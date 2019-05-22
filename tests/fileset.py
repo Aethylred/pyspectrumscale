@@ -40,7 +40,7 @@ def main():
     if CONFIG['fileset'] is None:
         response = scaleapi.fileset(
             filesystem=CONFIG['filesystem'][0],
-            allfields=True
+            everything=True
         )
     else:
         if len(CONFIG['fileset']) > 1:
@@ -48,7 +48,7 @@ def main():
         response = scaleapi.fileset(
             filesystem=CONFIG['filesystem'][0],
             fileset=CONFIG['fileset'][0],
-            allfields=True
+            everything=True
         )
 
     #print(json.dumps(response.json(), indent=2, sort_keys=True))

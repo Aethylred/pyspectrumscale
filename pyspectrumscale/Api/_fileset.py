@@ -12,7 +12,7 @@ def get_fileset(
         allfields: Union[bool, None]=None
 ):
     """
-    @brief      List all filesystems or return a specific filesystem
+    @brief      List all filesets or return a specific fileset from a filesystem
 
     @param      self        The object
     @param      filesystem  The filesystem name, default None, which returns all filesystems
@@ -46,7 +46,11 @@ def fileset(
         self,
         filesystem: str,
         fileset: Union[str, None]=None,
-        allfields: Union[bool, None]=None
+        allfields: Union[bool, None]=None,
+        acl: bool=False,
+        quota: bool=False,
+        owner: bool=False,
+        everything: bool=False
 ):
     """
     @brief      This method returns a specifc fileset from a specific filesystem as JSON with the response stripped away.
@@ -58,6 +62,13 @@ def fileset(
     @return     { description_of_the_return_value }
     """
 
+    # everything overrides all the other arguments
+    if everything:
+        acl = True
+        quota = True
+        owner = True
+        allfields = True
+
     response = None
     fsresponse = self.get_fileset(
         filesystem=filesystem,
@@ -66,10 +77,30 @@ def fileset(
     )
 
     if fsresponse.ok:
-        if len(fsresponse.json()['filesets']) == 1:
-            response = fsresponse.json()['filesets'][0]
-        else:
-            response = fsresponse.json()['filesets']
+        response = fsresponse.json()['filesets']
+
+        if acl or quota or owner:
+            updatedfs = []
+
+            for fs in response:
+                if acl:
+                    fsacl = self.acl(
+                        filesystem=fs['filesystemName'],
+                        path=fs['config']['path'],
+                        allfields=allfields
+                    )
+                    if fsacl:
+                        fs['config']['acl'] = fsacl
+
+                updatedfs.append(fs)
+
+            response = updatedfs
+
+        # If it's a single element list, just return the element
+        if len(response) == 1:
+            response = response[0]
+
+
 
     return response
 
@@ -78,7 +109,11 @@ def filesets(
         self,
         filesystems: Union[str, list, None]=None,
         filesets: Union[str, list, None]=None,
-        allfields: Union[bool, None]=None
+        allfields: Union[bool, None]=None,
+        acl: bool=False,
+        quota: bool=False,
+        owner: bool=False,
+        everything: bool=False
 ):
     """
     @brief      This method returns the list of matching filesets as JSON with the response stripped away.
@@ -103,7 +138,11 @@ def filesets(
             fsresponse = self.filesets(
                 filesystems=fs,
                 filesets=filesets,
-                allfields=allfields
+                allfields=allfields,
+                acl=acl,
+                owner=owner,
+                quota=quota,
+                everything=everything
             )
             if isinstance(fsresponse, list):
                 response += fsresponse
@@ -116,7 +155,11 @@ def filesets(
                 fsresponse = self.fileset(
                     filesystem=filesystems,
                     fileset=fs,
-                    allfields=allfields
+                    allfields=allfields,
+                    acl=acl,
+                    owner=owner,
+                    quota=quota,
+                    everything=everything
                 )
                 if isinstance(fsresponse, list):
                     response += fsresponse
@@ -127,7 +170,11 @@ def filesets(
             fsresponse = self.fileset(
                 filesystem=filesystems,
                 fileset=filesets,
-                allfields=allfields
+                allfields=allfields,
+                acl=acl,
+                owner=owner,
+                quota=quota,
+                everything=everything
             )
             if isinstance(fsresponse, list):
                 response += fsresponse
