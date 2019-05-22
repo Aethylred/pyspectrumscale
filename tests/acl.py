@@ -37,15 +37,17 @@ def main():
     if len(CONFIG['filesystem']) > 1:
         sys.exit("Requires only one filesystem specified with --filesystem")
 
-    if CONFIG['path']:
+    if CONFIG['path'] is not None:
         acl = scaleapi.acl(
             filesystem=CONFIG['filesystem'][0],
             path=CONFIG['path']
         )
-    elif CONFIG['fileset']:
+    elif CONFIG['fileset'] is not None:
+        if len(CONFIG['fileset']) > 1:
+            sys.exit("Requires only one fileset specified with --fileset")
         acl = scaleapi.acl(
             filesystem=CONFIG['filesystem'][0],
-            fileset=CONFIG['path']
+            fileset=CONFIG['fileset'][0]
         )
     else:
         acl = scaleapi.acl(

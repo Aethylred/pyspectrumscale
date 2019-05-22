@@ -100,8 +100,6 @@ def fileset(
         if len(response) == 1:
             response = response[0]
 
-
-
     return response
 
 

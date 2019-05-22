@@ -53,10 +53,12 @@ def acl(
     @return     { description_of_the_return_value }
     """
 
-    if fileset:
-        path = self.fileset(fileset)['config']['path']
+    if fileset is not None:
+        path = self.fileset(
+            filesystem=filesystem,
+            fileset=fileset
+        )['config']['path']
 
-    print(path)
     response = self.get_acl(
         filesystem=filesystem,
         path=path,
@@ -87,17 +89,39 @@ def acls(
     @return     { description_of_the_return_value }
     """
 
-    response = self.get_acl(
-        filesystem=filesystem,
-        path=path,
-        allfields=allfields
-    )
+    acls = []
 
-    acl = None
-    if 'acl' in response.json():
-        acl = response.json()['acl']
+    if filesystems is None:
+        acls = self.acls(
+            filesystems=self.list_filesystems(),
+            filesets=filesets,
+            paths=path,
+            allfields=allfields
+        )
+    elif isinstance(filesystems, list):
+        for fs in filesystems:
+            aclresponse = self.acls(
+                filesystems=fs,
+                filesets=filesets,
+                paths=paths,
+                allfields=allfields
+            )
+            if isinstance(aclresponse, list):
+                acls += aclresponse
+            else:
+                if aclresponse is not None:
+                    acls.append(aclresponse)
+    else:
+        # The trick here is to parse paths and filesets without duplicating the acls
 
-    return acl
+    if isinstance(acls, list):
+        if len(acls) == 1:
+            acls = acls[0]
+
+    if not acls:
+        acls = None
+
+    return acls
 
 
 def list_acls(
