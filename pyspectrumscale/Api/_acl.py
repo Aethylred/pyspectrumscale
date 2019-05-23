@@ -1,5 +1,11 @@
 """
 Methods for pyspectrumscale.Api that deal with access control lists (ACLs)
+
+WARNING: There are no 'all acls' queries in the Spectrum Scale API
+This means that all bulk operations require a query per path
+to retrieve their acl (two queries for a fileset).
+
+Requesting all acls from a filesystem or all filesystems can take many minutes
 """
 import sys
 from typing import Union
@@ -77,13 +83,12 @@ def acl(
                 acl['path'] = path
     else:
         acl = []
-        for fileset in self.fileset(
-            filesystem=filesystem,
-            allfields=True
+        for fileset in self.list_filesets(
+            filesystem=filesystem
         ):
             aclresponse = self.acl(
                 filesystem=filesystem,
-                path=fileset['config']['path'],
+                fileset=fileset,
                 allfields=allfields
             )
             if aclresponse is not None:
@@ -114,7 +119,6 @@ def acls(
     """
 
     acls = []
-
     if filesystems is None:
         acls = self.acls(
             filesystems=self.list_filesystems(),
@@ -230,6 +234,30 @@ def acls(
                         )
                         if matches is None:
                             acls.append(pathresponse)
+
+        if not paths and not filesets:
+            fsresponse = self.acls(
+                filesystems=filesystems,
+                filesets=self.list_filesets(filesystems),
+                allfields=allfields
+            )
+            if isinstance(fsresponse, list):
+                for acl in fsresponse:
+                    matches = next(
+                        (item for item in acls if item['path'] == acl['path']),
+                        None
+                    )
+                    if matches is None:
+                        acls.append(acl)
+            else:
+                if fsresponse is not None:
+                    matches = next(
+                        (item for item in acls if item['path'] == fsresponse['path']),
+                        None
+                    )
+                    if matches is None:
+                        acls.append(fsresponse)
+
 
     if not acls:
         acls = None
