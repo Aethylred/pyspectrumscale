@@ -52,22 +52,33 @@ def acl(
 
     @return     { description_of_the_return_value }
     """
+    acl = None
+    response = None
 
     if fileset is not None:
-        path = self.fileset(
+        fs = self.fileset(
             filesystem=filesystem,
             fileset=fileset
-        )['config']['path']
+        )
+        if fs is not None:
+            path = fs['config']['path']
 
-    response = self.get_acl(
-        filesystem=filesystem,
-        path=path,
-        allfields=allfields
-    )
+    if path is not None:
+        response = self.get_acl(
+            filesystem=filesystem,
+            path=path,
+            allfields=allfields
+        )
 
-    acl = None
-    if 'acl' in response.json():
-        acl = response.json()['acl']
+    if response is not None:
+        if 'acl' in response.json():
+            acl = response.json()['acl']
+            # tag the acl with the path
+            acl['path'] = path
+
+    if isinstance(acl, list):
+        if len(acl) == 1:
+            acl = acl[0]
 
     return acl
 
@@ -95,7 +106,7 @@ def acls(
         acls = self.acls(
             filesystems=self.list_filesystems(),
             filesets=filesets,
-            paths=path,
+            paths=paths,
             allfields=allfields
         )
     elif isinstance(filesystems, list):
@@ -113,13 +124,105 @@ def acls(
                     acls.append(aclresponse)
     else:
         # The trick here is to parse paths and filesets without duplicating the acls
-
-    if isinstance(acls, list):
-        if len(acls) == 1:
-            acls = acls[0]
+        # So do filesets first, then paths, but check we don't already have that acl
+        if filesets is not None:
+            if isinstance(filesets, list):
+                for fs in filesets:
+                    fsresponse = self.acl(
+                        filesystem=filesystems,
+                        fileset=fs,
+                        allfields=allfields
+                    )
+                    if isinstance(fsresponse, list):
+                        for acl in fsresponse:
+                            matches = next(
+                                (item for item in acls if item['path'] == acl['path']),
+                                None
+                            )
+                            if matches is None:
+                                acls.append(acl)
+                    else:
+                        if fsresponse is not None:
+                            matches = next(
+                                (item for item in acls if item['path'] == fsresponse['path']),
+                                None
+                            )
+                            if matches is None:
+                                acls.append(fsresponse)
+            else:
+                fsresponse = self.acl(
+                    filesystem=filesystems,
+                    fileset=filesets,
+                    allfields=allfields
+                )
+                if isinstance(fsresponse, list):
+                    for acl in fsresponse:
+                        matches = next(
+                            (item for item in acls if item['path'] == acl['path']),
+                            None
+                        )
+                        if matches is None:
+                            acls.append(acl)
+                else:
+                    if fsresponse is not None:
+                        matches = next(
+                            (item for item in acls if item['path'] == fsresponse['path']),
+                            None
+                        )
+                        if matches is None:
+                            acls.append(fsresponse)
+        if paths is not None:
+            if isinstance(paths, list):
+                for path in filesets:
+                    pathresponse = self.acl(
+                        filesystem=filesystems,
+                        path=path,
+                        allfields=allfields
+                    )
+                    if isinstance(pathresponse, list):
+                        for acl in pathresponse:
+                            matches = next(
+                                (item for item in acls if item['path'] == acl['path']),
+                                None
+                            )
+                            if matches is None:
+                                acls.append(acl)
+                    else:
+                        if pathresponse is not None:
+                            matches = next(
+                                (item for item in acls if item['path'] == pathresponse['path']),
+                                None
+                            )
+                            if matches is None:
+                                acls.append(pathresponse)
+            else:
+                pathresponse = self.acl(
+                    filesystem=filesystems,
+                    path=paths,
+                    allfields=allfields
+                )
+                if isinstance(pathresponse, list):
+                    for acl in pathresponse:
+                        matches = next(
+                            (item for item in acls if item['path'] == acl['path']),
+                            None
+                        )
+                        if matches is None:
+                            acls.append(acl)
+                else:
+                    if pathresponse is not None:
+                        matches = next(
+                            (item for item in acls if item['path'] == pathresponse['path']),
+                            None
+                        )
+                        if matches is None:
+                            acls.append(pathresponse)
 
     if not acls:
         acls = None
+    if isinstance(acls, list):
+        if len(acls) == 1:
+            acls = acls[0]
 
     return acls
 

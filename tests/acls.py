@@ -33,6 +33,7 @@ def main():
 
     response = scaleapi.acls(
         filesystems=CONFIG['filesystem'],
+        filesets=CONFIG['fileset'],
         paths=CONFIG['path'],
         allfields=True
     )
