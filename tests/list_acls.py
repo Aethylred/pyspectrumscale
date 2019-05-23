@@ -34,14 +34,17 @@ def main():
     if not CONFIG['filesystem']:
         sys.exit("Requires a filesystem specified with --filesystem")
 
+    if len(CONFIG['filesystem']) != 1:
+        sys.exit("Requires only one filesystem specified with --filesystem")
+
     if CONFIG['path']:
         response = scaleapi.list_acls(
-            CONFIG['filesystem'],
+            CONFIG['filesystem'][0],
             CONFIG['path']
         )
     else:
         response = scaleapi.list_acls(
-            CONFIG['filesystem']
+            CONFIG['filesystem'][0]
         )
 
     print(json.dumps(response, indent=2, sort_keys=True))

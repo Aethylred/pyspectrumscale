@@ -58,7 +58,8 @@ def acl(
     if fileset is not None:
         fs = self.fileset(
             filesystem=filesystem,
-            fileset=fileset
+            fileset=fileset,
+            allfields=True
         )
         if fs is not None:
             path = fs['config']['path']
@@ -75,17 +76,18 @@ def acl(
                 # tag the acl with the path
                 acl['path'] = path
     else:
-        response = []
+        acl = []
         for fileset in self.fileset(
             filesystem=filesystem,
             allfields=True
         ):
-            acl = self.acl(
+            aclresponse = self.acl(
                 filesystem=filesystem,
-                path=fileset['config']['path']
+                path=fileset['config']['path'],
+                allfields=allfields
             )
-            response.append(acl)
-
+            if aclresponse is not None:
+                acl.append(aclresponse)
 
     if isinstance(acl, list):
         if len(acl) == 1:
@@ -252,7 +254,7 @@ def list_acls(
     """
 
     filesets = self.fileset(
-        filesystem,
+        filesystem=filesystem,
         allfields=True
     )
 
@@ -264,17 +266,17 @@ def list_acls(
                 'path': fileset['config']['path']
             }
             summary['acl'] = self.acl(
-                filesystem,
+                filesystem=filesystem,
                 path=fileset['config']['path'],
                 allfields=True
             )
             acls[fileset['filesetName']] = summary
-    else:
+    elif filesets is not None:
         summary = {
             'path': filesets['config']['path']
         }
         summary['acl'] = self.acl(
-            filesystem,
+            filesystem=filesystem,
             path=filesets['config']['path'],
             allfields=True
         )
