@@ -69,12 +69,23 @@ def acl(
             path=path,
             allfields=allfields
         )
+        if response is not None:
+            if 'acl' in response.json():
+                acl = response.json()['acl']
+                # tag the acl with the path
+                acl['path'] = path
+    else:
+        response = []
+        for fileset in self.fileset(
+            filesystem=filesystem,
+            allfields=True
+        ):
+            acl = self.acl(
+                filesystem=filesystem,
+                path=fileset['config']['path']
+            )
+            response.append(acl)
 
-    if response is not None:
-        if 'acl' in response.json():
-            acl = response.json()['acl']
-            # tag the acl with the path
-            acl['path'] = path
 
     if isinstance(acl, list):
         if len(acl) == 1:
