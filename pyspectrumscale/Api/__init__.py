@@ -22,7 +22,8 @@ class Api:
         get_fileset,
         fileset,
         filesets,
-        list_filesets
+        list_filesets,
+        preppost_fileset
     )
     from ._acl import (
         get_acl,
@@ -211,7 +212,7 @@ class Api:
 
         return self._session.prepare_request(request)
 
-    def _preppush(
+    def _preppost(
         self,
         commandurl: type=str,
         data: type=dict
@@ -227,7 +228,7 @@ class Api:
         """
 
         request = requests.Request(
-            'PUSH',
+            'POST',
             url=commandurl,
             data=json.dumps(data)
         )

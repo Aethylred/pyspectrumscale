@@ -219,3 +219,57 @@ def list_filesets(
         filesets.append(response['filesetName'])
 
     return filesets
+
+## WRITABLE METHODS
+## The following methods can create changes in the Spectrum Scale Filesystem
+## Make sure that in all cases that they respect the dry-run flag
+
+# Create a prepared request to create a fileset
+
+
+def preppost_fileset(
+    self,
+    filesystem: type=str,
+    fileset: type=str,
+    path: type=str,
+    owner: type=str,
+    group: type=str,
+    permissions: type=str,
+    permissionchangemode: str='chmodAndUpdateAcl',
+    parent: type=str,
+    comment: type=str
+):
+
+    prepresponse = None
+
+    commandurl = (
+        "%s/filesystems/%s/filesets" % (
+            self._baseurl,
+            filesystem
+        )
+    )
+
+    data = {
+        'filesetName':  fileset,
+        'path':         path,
+        'owner':        ("%s:%s" % (owner, group)),
+        'permissions':  permissions,
+        'permissionChangeMode': permissionchangemode,
+        'inodeSpace':   parent,
+        'comment':      comment
+    }
+
+    if not self._dryrun:
+        prepresponse = self._preppost(
+            commandurl=commandurl,
+            data=data
+        )
+    else:
+        reason = "Dry run! Fileset %s NOT created!" % fileset
+        prepresponse = {
+            'commandurl': commandurl,
+            'data': data,
+            'reason': reason
+        }
+
+    return prepresponse

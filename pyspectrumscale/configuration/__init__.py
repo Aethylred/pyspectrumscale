@@ -67,7 +67,7 @@ def do_args():
         default=None,
         nargs='+',
         dest='fileset',
-        help="Specify a scale filesystem, requires a filesystem",
+        help="Specify a scale fileset, requires a filesystem",
     )
 
     parser.add_argument(
@@ -75,6 +75,20 @@ def do_args():
         default=None,
         dest='path',
         help="Specify a scale filesystem, requires a filesystem",
+    )
+
+    parser.add_argument(
+        "--parent",
+        default=None,
+        dest='parent',
+        help="Specify a scale fileset parent",
+    )
+
+    parser.add_argument(
+        "--comment",
+        default=None,
+        dest='comment',
+        help="Specify a scale fileset comment",
     )
 
     parser.add_argument(
@@ -234,3 +248,5 @@ CONFIG['dryrun'] = ARGS.dryrun
 CONFIG['filesystem'] = ARGS.filesystem
 CONFIG['fileset'] = ARGS.fileset
 CONFIG['path'] = ARGS.path
+CONFIG['parent'] = ARGS.parent
+CONFIG['comment'] = ARGS.comment
