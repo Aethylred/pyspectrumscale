@@ -239,7 +239,24 @@ def preppost_fileset(
     parent: type=str,
     comment: type=str
 ):
+    """
+    @brief      Creates a pepared request to POST creation of a fileset. While this
+                is not a writable method in itself, if it is sent to the self._session
+                it will be executed. Using the self.send() method is recommended
 
+    @param      self                  The object
+    @param      filesystem            The filesystem
+    @param      fileset               The fileset
+    @param      path                  The path
+    @param      owner                 The owner
+    @param      group                 The group
+    @param      permissions           The permissions
+    @param      permissionchangemode  The permissionchangemode
+    @param      parent                The parent
+    @param      comment               The comment
+
+    @return     a requests.PreparedRequest object
+    """
     prepresponse = None
 
     commandurl = (
@@ -259,17 +276,9 @@ def preppost_fileset(
         'comment':      comment
     }
 
-    if not self._dryrun:
-        prepresponse = self._preppost(
-            commandurl=commandurl,
-            data=data
-        )
-    else:
-        reason = "Dry run! Fileset %s NOT created!" % fileset
-        prepresponse = {
-            'commandurl': commandurl,
-            'data': data,
-            'reason': reason
-        }
+    prepresponse = self._preppost(
+        commandurl=commandurl,
+        data=data
+    )
 
     return prepresponse

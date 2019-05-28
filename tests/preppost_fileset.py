@@ -6,6 +6,7 @@ import json
 import sys
 from pyspectrumscale.Api import Api
 from pyspectrumscale.configuration import CONFIG
+from pyspectrumscale.Api._utils import jsonprepreq
 
 
 def main():
@@ -63,14 +64,14 @@ def main():
         parent=CONFIG['parent'],
         comment=CONFIG['comment']
     )
+    sendresponse = scaleapi.send(response)
 
-    #print(json.dumps(response.json(), indent=2, sort_keys=True))
-    #print(json.dumps(response._content, indent=2, sort_keys=True))
-    if isinstance(response, dict):
-        print(json.dumps(response, indent=2, sort_keys=True))
+    print(json.dumps(jsonprepreq(response), indent=2, sort_keys=True))
+
+    if CONFIG['dryrun']:
+        print(json.dumps(sendresponse, indent=2, sort_keys=True))
     else:
-        print(json.dumps(response.json(), indent=2, sort_keys=True))
-
+        print(json.dumps(sendresponse.json(), indent=2, sort_keys=True))
 
 if __name__ == "__main__":
     main()

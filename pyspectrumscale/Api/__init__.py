@@ -6,6 +6,7 @@ import json
 from typing import Union
 import requests
 import urllib3
+from ._utils import jsonprepreq
 
 class Api:
     """
@@ -304,3 +305,16 @@ class Api:
         """
         commandurl = "%sjobs/%s"% (self._baseurl, job_id)
         return self._get(commandurl)
+
+## WRITE METHODS: Methods beyond this point can update spectrumscale
+## these methods MUST make no changes if self._dryrun is True
+##
+
+    def send(
+        self,
+        preprequest: type=requests.PreparedRequest
+    ):
+        if self._dryrun:
+            return jsonprepreq(preprequest)
+        else:
+            return self._session.send(preprequest)
