@@ -32,6 +32,11 @@ class Api:
         acls,
         list_acls
     )
+    from ._quota import (
+        get_quota,
+        quota,
+        quotas
+    )
 
     def __init__(
             self,

@@ -89,6 +89,7 @@ class JobQueue:
 
     def submitjobs(self):
 
+        response = {}
         for jobuuid in self._jobs:
             if self._jobs[jobuuid]['ok']:
                 sendresponse = self._scaleapi.send(self._jobs[jobuuid]['request'])
@@ -101,4 +102,10 @@ class JobQueue:
                     self._jobs[jobuuid]['status'] = 'Submission Failed'
                     self._jobs[jobuuid]['ok'] = False
 
-        return None
+                response[jobuuid] = {
+                    'status': self._jobs[jobuuid]['status'],
+                    'ok': self._jobs[jobuuid]['ok'],
+                    'jobid': self._jobs[jobuuid]['jobid']
+                }
+
+        return response
