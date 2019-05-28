@@ -150,3 +150,21 @@ def quotas(
         response = None
 
     return response
+
+## WARNING: The following methods can wite to the Spectrum Scale filsystem
+## These methods must make no changes if dryrun is true
+##
+
+def preppost_quota(
+    self,
+    filesystem: type=str,
+    fileset: type=str,
+    blocksoftlimit: Union[None, str]=None,
+    blockhardlimit: Union[None, str]=None,
+    blockgraceperiod: Union[None, str]=None,
+    filessoftlimit: Union[None, str]=None,
+    fileshardlimit: Union[None, str]=None,
+    filesgraceperiod: Union[None, str]=None,
+    quotatype: Union[None, str]="FILESET"
+):
+    print('do something')
