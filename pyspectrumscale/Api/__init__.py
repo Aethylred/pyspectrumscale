@@ -314,7 +314,11 @@ class Api:
         self,
         preprequest: type=requests.PreparedRequest
     ):
+        response = None
         if self._dryrun:
-            return jsonprepreq(preprequest)
+            response = jsonprepreq(preprequest)
+            response['dryrun'] = True
         else:
-            return self._session.send(preprequest)
+            response = self._session.send(preprequest)
+
+        return response

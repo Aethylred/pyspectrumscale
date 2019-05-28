@@ -20,7 +20,7 @@ class JobQueue:
         self,
         scaleapi: type=Api
     ):
-        self._scalapi = scaleapi
+        self._scaleapi = scaleapi
         self._jobs = {}
 
     def listjobs(
@@ -78,9 +78,27 @@ class JobQueue:
                 'request': request,
                 'status': 'New',
                 'jobid': None,
-                'requires': requires
+                'sendresponse': None,
+                'requires': requires,
+                'ok': True
             }
             response['queued'] = True
             response['uuid'] = jobuuid
 
         return response
+
+    def submitjobs(self):
+
+        for jobuuid in self._jobs:
+            if self._jobs[jobuuid]['ok']:
+                sendresponse = self._scaleapi.send(self._jobs[jobuuid]['request'])
+                self._jobs[jobuuid]['sendresponse'] = sendresponse.json()
+                if sendresponse.ok:
+                    self._jobs[jobuuid]['status'] = 'Submitted'
+                    if 'jobs' in sendresponse.json():
+                        self._jobs[jobuuid]['jobid'] = sendresponse.json()['jobs'][0]['jobId']
+                else:
+                    self._jobs[jobuuid]['status'] = 'Submission Failed'
+                    self._jobs[jobuuid]['ok'] = False
+
+        return None

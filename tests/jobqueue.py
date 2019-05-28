@@ -69,17 +69,18 @@ def main():
     )
 
     queueresponse = jobqueue.queuejob(preprequest)
+    submitresponnse = jobqueue.submitjobs()
 
-    print(json.dumps(jsonprepreq(preprequest), indent=2, sort_keys=True))
+    # print(json.dumps(jsonprepreq(preprequest), indent=2, sort_keys=True))
 
     print(json.dumps(queueresponse, indent=2, sort_keys=True))
 
     print(json.dumps(jobqueue.listjobs(asjson=True), indent=2, sort_keys=True))
 
     # Test what happens if the job us resubmitted
-    queueresponse = jobqueue.queuejob(preprequest)
-    print(json.dumps(queueresponse, indent=2, sort_keys=True))
-    print(json.dumps(jobqueue.listjobs(asjson=True), indent=2, sort_keys=True))
+    # queueresponse = jobqueue.queuejob(preprequest)
+    # print(json.dumps(queueresponse, indent=2, sort_keys=True))
+    # print(json.dumps(jobqueue.listjobs(asjson=True), indent=2, sort_keys=True))
 
     # if CONFIG['dryrun']:
     #     print(json.dumps(sendresponse, indent=2, sort_keys=True))
