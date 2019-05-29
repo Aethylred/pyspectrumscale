@@ -72,6 +72,9 @@ def main():
         print(json.dumps(sendresponse, indent=2, sort_keys=True))
     else:
         print(json.dumps(sendresponse.json(), indent=2, sort_keys=True))
+        jobid = sendresponse.json()['jobs'][0]['jobId']
+        jobresponse = scaleapi.jobs(jobid)
+        print(json.dumps(jobresponse, indent=2, sort_keys=True))
 
 if __name__ == "__main__":
     main()

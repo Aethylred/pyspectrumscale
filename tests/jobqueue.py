@@ -56,7 +56,7 @@ def main():
     if not CONFIG['path']:
         sys.exit("Requires a path specified with --path")
 
-    preprequest = scaleapi.preppost_fileset(
+    fspreprequest = scaleapi.preppost_fileset(
         filesystem=CONFIG['filesystem'][0],
         fileset=CONFIG['fileset'][0],
         path=CONFIG['path'],
@@ -68,14 +68,32 @@ def main():
         comment=CONFIG['comment']
     )
 
-    queueresponse01 = jobqueue.queuejob(preprequest)
-    submitresponse = jobqueue.submitjobs()
+    quotapreprequest = scaleapi.preppost_quota(
+        filesystem=CONFIG['filesystem'][0],
+        fileset=CONFIG['fileset'][0],
+        blocksoftlimit='10G',
+        blockhardlimit='11G',
+        blockgraceperiod='7days',
+        filessoftlimit='10M',
+        fileshardlimit='11M',
+        filesgraceperiod='7days',
+        quotatype="FILESET"
+    )
+
+    queueresponse01 = jobqueue.queuejob(fspreprequest)
+    queueresponse02 = jobqueue.queuejob(
+        request=quotapreprequest,
+        requires=queueresponse01['uuid']
+    )
+    # submitresponse = jobqueue.submitjobs()
 
     # print(json.dumps(jsonprepreq(preprequest), indent=2, sort_keys=True))
 
     print(json.dumps(queueresponse01, indent=2, sort_keys=True))
     print('---')
-    print(json.dumps(submitresponse, indent=2, sort_keys=True))
+    print(json.dumps(queueresponse02, indent=2, sort_keys=True))
+    print('---')
+    #print(json.dumps(submitresponse, indent=2, sort_keys=True))
     print('---')
     print(json.dumps(jobqueue.listjobs(asjson=True), indent=2, sort_keys=True))
 

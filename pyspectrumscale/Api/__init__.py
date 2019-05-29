@@ -38,6 +38,12 @@ class Api:
         quotas,
         preppost_quota
     )
+    from ._job import (
+        get_jobs,
+        job,
+        jobs,
+        list_jobs
+    )
 
     def __init__(
             self,
@@ -296,18 +302,6 @@ class Api:
         @return     { description_of_the_return_value }
         """
         commandurl = "%sconfig" % self._baseurl
-        return self._get(commandurl)
-
-    def job(self, job_id: type = str):
-        """
-        @brief      { function_description }
-
-        @param      self    The object
-        @param      job_id  The job identifier
-
-        @return     { description_of_the_return_value }
-        """
-        commandurl = "%sjobs/%s"% (self._baseurl, job_id)
         return self._get(commandurl)
 
 ## WRITE METHODS: Methods beyond this point can update spectrumscale
