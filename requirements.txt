@@ -1,6 +1,7 @@
 certifi==2018.10.15
 chardet==3.0.4
 idna==2.7
+numpy==1.16.4
 PyYAML==3.13
 quantities==0.12.3
 requests==2.20.0

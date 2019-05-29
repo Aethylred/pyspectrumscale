@@ -239,14 +239,14 @@ def preppost_quota(
         if fileset is not None:
             commandurl = (
                 "%sfilesystems/%s/quotas" % (
-                    self._base_url,
+                    self._baseurl,
                     filesystem
                 )
             )
         else:
             commandurl = (
                 "%sfilesystems/%s/filesets/%s/quotas" % (
-                    self._base_url,
+                    self._baseurl,
                     filesystem,
                     fileset
                 )
