@@ -2,6 +2,7 @@ certifi==2018.10.15
 chardet==3.0.4
 idna==2.7
 PyYAML==3.13
+quantities==0.12.3
 requests==2.20.0
 six==1.12.0
 typing==3.6.6
