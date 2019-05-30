@@ -56,6 +56,11 @@ def main():
     if not CONFIG['path']:
         sys.exit("Requires a path specified with --path")
 
+    # Prepare the following requests:
+    # - create a fileset
+    # - set a quota on the fileset
+    # - set an ACL on the fileset
+    # Quota and ACL require that the first job completes before being submitted
     fspreprequest = scaleapi.preppost_fileset(
         filesystem=CONFIG['filesystem'][0],
         fileset=CONFIG['fileset'][0],
@@ -80,9 +85,70 @@ def main():
         quotatype="FILESET"
     )
 
+    aclentries = [
+        {
+            'flags': '',
+            'permissions': 'rwmxDaAnNcCos',
+            'type': 'allow',
+            'who': 'special:owner@'
+        },
+        {
+            'flags': '',
+            'permissions': 'rwmxDancs',
+            'type': 'allow',
+            'who': 'special:group@'
+        },
+        {
+            'flags': '',
+            'permissions': 'rxancs',
+            'type': 'allow',
+            'who': 'group:apps-team'
+        },
+        {
+            'flags': '',
+            'permissions': 'ancs',
+            'type': 'allow',
+            'who': 'special:everyone@'
+        },
+        {
+            'flags': 'fdi',
+            'permissions': 'rwmxDaAnNcCos',
+            'type': 'allow',
+            'who': 'special:owner@'
+        },
+        {
+            'flags': 'fdi',
+            'permissions': 'rwmxDancs',
+            'type': 'allow',
+            'who': 'special:group@'
+        },
+        {
+            'flags': 'fdi',
+            'permissions': 'rxancs',
+            'type': 'allow',
+            'who': 'group:apps-team'
+        },
+        {
+            'flags': 'fdi',
+            'permissions': 'ancs',
+            'type': 'allow',
+            'who': 'special:everyone@'
+        }
+    ]
+
+    aclpreprequest = scaleapi.prepput_acl(
+        filesystem=CONFIG['filesystem'][0],
+        path=CONFIG['path'],
+        entries=aclentries
+    )
+
     queueresponse01 = jobqueue.queuejob(fspreprequest)
     queueresponse02 = jobqueue.queuejob(
         request=quotapreprequest,
+        requires=queueresponse01['uuid']
+    )
+    queueresponse03 = jobqueue.queuejob(
+        request=aclpreprequest,
         requires=queueresponse01['uuid']
     )
     # submitresponse = jobqueue.submitjobs()
@@ -92,6 +158,8 @@ def main():
     print(json.dumps(queueresponse01, indent=2, sort_keys=True))
     print('---')
     print(json.dumps(queueresponse02, indent=2, sort_keys=True))
+    print('---')
+    print(json.dumps(queueresponse03, indent=2, sort_keys=True))
     print('---')
     #print(json.dumps(submitresponse, indent=2, sort_keys=True))
     print('---')

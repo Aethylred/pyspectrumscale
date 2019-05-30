@@ -30,7 +30,8 @@ class Api:
         get_acl,
         acl,
         acls,
-        list_acls
+        list_acls,
+        prepput_acl
     )
     from ._quota import (
         get_quota,

@@ -318,10 +318,10 @@ def list_acls(
 
 def prepput_acl(
         self,
-        filesystem: type=str,
-        path: type=str,
-        acltype: type=str,
-        entries: type=list
+        filesystem: str,
+        path: str,
+        entries: list,
+        acltype: str='NFSv4'
 ):
     """
     @brief      Creates a requests.PreparedRequest to update an ACL on a path
