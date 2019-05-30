@@ -145,25 +145,33 @@ def main():
     queueresponse01 = jobqueue.queuejob(fspreprequest)
     queueresponse02 = jobqueue.queuejob(
         request=quotapreprequest,
+        runonfail=False,
         requires=queueresponse01['uuid']
     )
     queueresponse03 = jobqueue.queuejob(
         request=aclpreprequest,
         requires=queueresponse01['uuid']
     )
-    # submitresponse = jobqueue.submitjobs()
 
     # print(json.dumps(jsonprepreq(preprequest), indent=2, sort_keys=True))
 
-    print(json.dumps(queueresponse01, indent=2, sort_keys=True))
+    # print(json.dumps(queueresponse01, indent=2, sort_keys=True))
+    # print('---')
+    # print(json.dumps(queueresponse02, indent=2, sort_keys=True))
+    # print('---')
+    # print(json.dumps(queueresponse03, indent=2, sort_keys=True))
+    # print('+++')
+    # print(json.dumps(jobqueue.listjobs(asjson=True), indent=2, sort_keys=True))
+    # print('---')
+
+    submitresponse = jobqueue.submitjobs()
+    print(json.dumps(submitresponse, indent=2, sort_keys=True))
     print('---')
-    print(json.dumps(queueresponse02, indent=2, sort_keys=True))
-    print('---')
-    print(json.dumps(queueresponse03, indent=2, sort_keys=True))
-    print('---')
-    #print(json.dumps(submitresponse, indent=2, sort_keys=True))
+    submitresponse = jobqueue.submitjobs()
+    print(json.dumps(submitresponse, indent=2, sort_keys=True))
     print('---')
     print(json.dumps(jobqueue.listjobs(asjson=True), indent=2, sort_keys=True))
+
 
     # Test what happens if the job us resubmitted
     # queueresponse01 = jobqueue.queuejob(preprequest)

@@ -238,7 +238,7 @@ def preppost_quota(
     if validquota:
         if fileset is not None:
             commandurl = (
-                "%sfilesystems/%s/quotas" % (
+                "%s/filesystems/%s/quotas" % (
                     self._baseurl,
                     filesystem
                 )

@@ -44,6 +44,27 @@ def jsonprepreq(
     return jsonprepreq
 
 
+def jsonresponse(
+    response: type=requests.Response
+):
+    """
+    At this point it is completely built and ready
+    to be fired; it is "prepared". but we need it as JSONable dict
+    """
+    jsonresponse = {
+        'headers': {},
+        'body': {}
+    }
+
+    jsonresponse['url'] = response.url
+    jsonresponse['status_code'] = response.status_code
+    jsonresponse['reason'] = response.reason
+    for key, value in response.headers.items():
+        jsonresponse['headers'][key] = value
+
+    return jsonresponse
+
+
 def validinodestr(
         inodestr: str
 ):
