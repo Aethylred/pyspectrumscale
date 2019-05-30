@@ -337,7 +337,7 @@ def prepput_acl(
 
     prepresponse = None
 
-    commandurl = "%sfilesystems/%s/acl/%s" % (
+    commandurl = "%s/filesystems/%s/acl/%s" % (
         self._baseurl,
         filesystem,
         truncsafepath(path)
