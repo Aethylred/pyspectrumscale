@@ -247,9 +247,9 @@ class Api:
         return self._session.prepare_request(request)
 
     def _prepput(
-        self,
-        commandurl: type=str,
-        data: type=dict
+            self,
+            commandurl: type=str,
+            data: type=dict
     ):
         """
         @brief This cleans up the args and parameters posts the and creates a prepared PUT reques from the internal sessions object

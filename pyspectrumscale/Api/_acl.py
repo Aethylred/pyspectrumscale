@@ -312,3 +312,44 @@ def list_acls(
 
     return acls
 
+## WARNING: The following methods can wite to the Spectrum Scale filsystem
+## These methods must make no changes if dryrun is true
+
+
+def prepput_acl(
+        self,
+        filesystem: type=str,
+        path: type=str,
+        acltype: type=str,
+        entries: type=list
+):
+    """
+    @brief      Creates a requests.PreparedRequest to update an ACL on a path
+
+    @param      self        The object
+    @param      filesystem  The filesystem
+    @param      path        The path
+    @param      acltype     The acltype
+    @param      entries     The list of ACL entries
+
+    @return     Returns a PreparedRequest object
+    """
+
+    prepresponse = None
+
+    commandurl = "%sfilesystems/%s/acl/%s" % (
+        self._baseurl,
+        filesystem,
+        truncsafepath(path)
+    )
+    data = {
+        'entries': entries,
+        'type': acltype
+    }
+
+    prepresponse = self._prepput(
+        commandurl=commandurl,
+        data=data
+    )
+
+    return prepresponse
