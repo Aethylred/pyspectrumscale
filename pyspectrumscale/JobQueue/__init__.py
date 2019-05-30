@@ -165,21 +165,28 @@ class JobQueue:
         response = {}
         for jobuuid in self._jobs:
             newsubmission = False
+            requireuuid = None
+            requirestatus = None
             if self._jobs[jobuuid]['ok']:
                 if self._jobs[jobuuid]['status'] in self.NEWSTATES:
-                    requireduuid = self.job(jobuuid)['requires']
-                    if requireduuid:
-                        requiredjob = self.job(requireduuid)
-                        if requiredjob['status'] in self.COMPLETEDSTATES:
-                            if not (requiredjob['status'] in self.FAILEDSTATES and not self.job(jobuuid)['runonfail']):
-                                newsubmission = True
-                            else:
-                                self._jobs[jobuuid]['status'] = self.REQUIREDFAILED
+                    requireuuid = self.job(jobuuid)['requires']
+                    if requireuuid:
+                        requiredjob = self.job(requireuuid)
+                        requirestatus = requiredjob['status']
+                        if requirestatus in self.COMPLETEDSTATES:
+                            if requirestatus in self.FAILEDSTATES:
+                                if self.job(jobuuid)['runonfail']:
+                                    newsubmission = True
+                                else:
+                                    self._jobs[jobuuid]['status'] = self.REQUIREDFAILED
+                                    self._jobs[jobuuid]['ok'] = False
                         else:
                             self._jobs[jobuuid]['status'] = self.PENDING
-
                     else:
                         newsubmission = True
+                elif self._jobs[jobuuid]['status'] in self.RUNNINGSTATES:
+                    # This will refresh the job status of a running job
+                    self.job(jobuuid)
 
             if newsubmission:
                 sendresponse = self._scaleapi.send(self._jobs[jobuuid]['request'])
@@ -202,6 +209,8 @@ class JobQueue:
                 'status': self._jobs[jobuuid]['status'],
                 'ok': self._jobs[jobuuid]['ok'],
                 'jobid': self._jobs[jobuuid]['jobid'],
+                'requires': requireuuid,
+                'requirestatus': requirestatus,
                 'newsubmission': newsubmission
             }
 
