@@ -29,7 +29,7 @@ setuptools.setup(
         'requests',
         'typing',
         'urllib3',
-        'quiantities',
+        'quantities',
         'numpy'
     ]
 )
