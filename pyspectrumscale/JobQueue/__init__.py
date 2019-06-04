@@ -58,8 +58,8 @@ class JobQueue:
         ]
 
     def listjobs(
-        self,
-        asjson: bool=False
+            self,
+            asjson: bool=False
     ):
 
         joblist = dict(self._jobs)
@@ -71,7 +71,7 @@ class JobQueue:
         return joblist
 
     def listjobuuids(
-        self
+            self
     ):
         idlist = []
         for jobuuid in self.listjobs():
@@ -80,7 +80,7 @@ class JobQueue:
         return idlist
 
     def listjobids(
-        self
+            self
     ):
         idlist = []
         for jobuuid in self.listjobs():
