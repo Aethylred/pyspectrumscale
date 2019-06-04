@@ -153,24 +153,13 @@ def main():
         requires=queueresponse01['uuid']
     )
 
-    # print(json.dumps(jsonprepreq(preprequest), indent=2, sort_keys=True))
 
-    # print(json.dumps(queueresponse01, indent=2, sort_keys=True))
-    # print('---')
-    # print(json.dumps(queueresponse02, indent=2, sort_keys=True))
-    # print('---')
-    # print(json.dumps(queueresponse03, indent=2, sort_keys=True))
-    # print('+++')
-    # print(json.dumps(jobqueue.listjobs(asjson=True), indent=2, sort_keys=True))
-    # print('---')
-
-    submitresponse = jobqueue.submitjobs()
-    print(json.dumps(submitresponse, indent=2, sort_keys=True))
+    print(json.dumps(jobqueue.status(), indent=2, sort_keys=True))
+    print('+++')
+    runresponse = jobqueue.run(completelog=True, tick=True)
+    print(json.dumps(runresponse, indent=2, sort_keys=True))
     print('---')
-    submitresponse = jobqueue.submitjobs()
-    print(json.dumps(submitresponse, indent=2, sort_keys=True))
-    print('---')
-    print(json.dumps(jobqueue.listjobs(asjson=True), indent=2, sort_keys=True))
+    print(json.dumps(jobqueue.status(), indent=2, sort_keys=True))
 
 
     # Test what happens if the job us resubmitted

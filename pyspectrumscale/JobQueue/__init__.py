@@ -313,3 +313,46 @@ class JobQueue:
             }
 
         return response
+
+    def run(
+        self,
+        completelog: bool=False,
+        tick: bool=False
+    ):
+        """
+        @brief      { function_description }
+
+        @param      self  The object
+
+        @return     { description_of_the_return_value }
+        """
+
+        response = None
+        if completelog:
+            response = []
+
+        if self._scaleapi._dryrun:
+            # Do one submit
+            if tick:
+                print('-')
+            response = self.submitjobs()
+
+        else:
+            # Run until completed
+            while self.status()['status'] not in self.COMPLETEDSTATES:
+                if tick:
+                    print('.', end="")
+                submitresponse = self.submitjobs()
+                if completelog:
+                    response.append(submitresponse)
+                else:
+                    response = submitresponse
+
+            if tick:
+                print("!")
+
+        if isinstance(response, list):
+            if len(response) == 1:
+                response = response[0]
+
+        return response
