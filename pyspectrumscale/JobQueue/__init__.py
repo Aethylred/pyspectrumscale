@@ -89,25 +89,74 @@ class JobQueue:
         return idlist
 
     def job(
-        self,
-        jobuuid: str,
-        asjson: bool=False
+            self,
+            jobuuid: str,
+            asjson: bool=False
     ):
-        job = dict(self._jobs[jobuuid])
+        job = None
 
-        if asjson:
-            job['request'] = jsonprepreq(job['request'])
+        if jobuuid in self._jobs:
+            job = dict(self._jobs[jobuuid])
 
-        # If we're asking about a job, update it's status
-        if job['status'] in self.RUNNINGSTATES and job['jobid']:
-            newstatus = self._scaleapi.job(job['jobid'])['status']
-            job['status'] = newstatus
-            self._jobs[jobuuid]['status'] = newstatus
-            if newstatus in self.FAILEDSTATES:
-                job['ok'] = False
-                self._jobs[jobuuid]['ok'] = False
+            if asjson:
+                job['request'] = jsonprepreq(job['request'])
+
+            # If we're asking about a job, update it's status
+            if job['status'] in self.RUNNINGSTATES and job['jobid']:
+                jobresponse = self._scaleapi.job(job['jobid'])
+                newstatus = jobresponse['status']
+                job['status'] = newstatus
+                self._jobs[jobuuid]['status'] = newstatus
+                if newstatus in self.FAILEDSTATES:
+                    errormsg = jobresponse['result']['stderr'][0]
+                    job['ok'] = False
+                    job['error'] = errormsg
+                    self._jobs[jobuuid]['ok'] = False
+                    self._jobs[jobuuid]['error'] = errormsg
 
         return job
+
+    def jobstatus(
+            self,
+            jobuuids: Union[str, None]=None,
+    ):
+        """
+        """
+        response = {}
+        if isinstance(jobuuids, list):
+            for jobuuid in jobuuids:
+                job = self.job(jobuuid)
+                if job is not None:
+                    jobstatus = {
+                        'ok': job['ok'],
+                        'status': job['status']
+                    }
+                    if 'error' in job:
+                        jobstatus['error'] = job['error']
+                    response[jobuuid] = jobstatus
+        elif jobuuids is not None:
+            job = self.job(jobuuids)
+            if job is not None:
+                jobstatus = {
+                    'ok': job['ok'],
+                    'status': job['status']
+                }
+                if 'error' in job:
+                    jobstatus['error'] = job['error']
+                response[jobuuid] = jobstatus
+        else:
+            for jobuuid in self.listjobuuids():
+                job = self.job(jobuuid)
+                if job is not None:
+                    jobstatus = {
+                        'ok': job['ok'],
+                        'status': job['status']
+                    }
+                    if 'error' in job:
+                        jobstatus['error'] = job['error']
+                    response[jobuuid] = jobstatus
+
+        return response
 
     def queuejob(
             self,
@@ -179,6 +228,10 @@ class JobQueue:
                                     newsubmission = True
                                 else:
                                     self._jobs[jobuuid]['status'] = self.REQUIREDFAILED
+                                    self._jobs[jobuuid]['error'] = (
+                                        "Required job %s failed" %
+                                        self.job(jobuuid)['requires']
+                                    )
                                     self._jobs[jobuuid]['ok'] = False
                         else:
                             self._jobs[jobuuid]['status'] = self.PENDING
