@@ -209,7 +209,52 @@ class JobQueue:
 
         return response
 
+    def status(self):
+        """
+        """
+
+        status = {
+            'status': self.PENDING,
+            'jobcount': 0,
+            'failcount': 0,
+            'newcount': 0,
+            'runningcount': 0,
+            'completecount': 0,
+            'failreports': {}
+        }
+        jobstatus = self.jobstatus()
+        status['jobcount'] = len(jobstatus)
+
+        for jobuuid, state in jobstatus.items():
+            if state['status'] in self.COMPLETEDSTATES:
+                status['completecount'] += 1
+                if state['status'] in self.FAILEDSTATES:
+                    status['failcount'] += 1
+                    status['failreports'][jobuuid] = state['error']
+            elif state['status'] in self.RUNNINGSTATES:
+                status['runningcount'] += 1
+            else:
+                status['newcount'] += 1
+
+        if status['runningcount']:
+            status['status'] = self.RUNNING
+        elif status['completecount']:
+            status['status'] = self.COMPLETED
+
+        return status
+
+
+## WARNING: The following methods can make requests that can make changes
+## on the Spectrum Scale filesystem
+
     def submitjobs(self):
+        """
+        @brief      This is a single submission iteration of the JobQueue
+
+        @param      self  The JobQueue object
+
+        @return     a list of dict responses from each of the jobs submitted
+        """
 
         response = {}
         for jobuuid in self._jobs:
