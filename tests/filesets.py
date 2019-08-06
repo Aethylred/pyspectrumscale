@@ -32,8 +32,7 @@ def main():
     )
 
     response = scaleapi.filesets(
-        filesystems=CONFIG['filesystem'],
-        filesets=CONFIG['fileset'],
+        allfields=True,
         everything=True
     )
 

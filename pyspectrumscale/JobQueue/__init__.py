@@ -25,6 +25,7 @@ class JobQueue:
 
         # Globals:
         self.NEW = 'NEW'
+        self.EMPTY = 'EMPTY'
         self.PENDING = 'PENDING'
         self.SUBMITTED = 'SUBMITTED'
         self.SUBMITFAILED = 'SUBMITFAILED'
@@ -45,6 +46,7 @@ class JobQueue:
         ]
         self.RUNNINGSTATES = [self.SUBMITTED, self.RUNNING]
         self.COMPLETEDSTATES = [
+            self.EMPTY,
             self.COMPLETED,
             self.SUBMITFAILED,
             self.FAILED,
@@ -214,7 +216,7 @@ class JobQueue:
         """
 
         status = {
-            'status': self.PENDING,
+            'status': self.EMPTY,
             'jobcount': 0,
             'failcount': 0,
             'newcount': 0,
@@ -224,6 +226,8 @@ class JobQueue:
         }
         jobstatus = self.jobstatus()
         status['jobcount'] = len(jobstatus)
+        if status['jobcount'] > 0:
+            status['status'] = self.PENDING
 
         for jobuuid, state in jobstatus.items():
             if state['status'] in self.COMPLETEDSTATES:
