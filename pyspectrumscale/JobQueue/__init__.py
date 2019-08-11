@@ -229,23 +229,24 @@ class JobQueue:
         if status['jobcount'] > 0:
             status['status'] = self.NEW
 
-        for jobuuid, state in jobstatus.items():
-            if state['status'] in self.COMPLETEDSTATES:
-                status['completecount'] += 1
-                if state['status'] in self.FAILEDSTATES:
-                    status['failcount'] += 1
-                    status['failreports'][jobuuid] = state['error']
-            elif state['status'] in self.RUNNINGSTATES:
-                status['runningcount'] += 1
-            else:
-                status['newcount'] += 1
+            for jobuuid, state in jobstatus.items():
+                if state['status'] in self.COMPLETEDSTATES:
+                    status['completecount'] += 1
+                    if state['status'] in self.FAILEDSTATES:
+                        status['failcount'] += 1
+                        status['failreports'][jobuuid] = state['error']
+                elif state['status'] in self.RUNNINGSTATES:
+                    status['runningcount'] += 1
+                else:
+                    status['newcount'] += 1
 
-        if status['newcount']:
+        if status['completecount'] < status['jobcount']:
             status['status'] = self.PENDING
-        elif status['runningcount']:
-            status['status'] = self.RUNNING
-        elif status['completecount']:
+        else:
             status['status'] = self.COMPLETED
+
+        if status['runningcount']:
+            status['status'] = self.RUNNING
 
         return status
 
