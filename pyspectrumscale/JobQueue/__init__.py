@@ -145,7 +145,7 @@ class JobQueue:
                 }
                 if 'error' in job:
                     jobstatus['error'] = job['error']
-                response[jobuuid] = jobstatus
+                response[jobuuids] = jobstatus
         else:
             for jobuuid in self.listjobuuids():
                 job = self.job(jobuuid)
@@ -227,7 +227,7 @@ class JobQueue:
         jobstatus = self.jobstatus()
         status['jobcount'] = len(jobstatus)
         if status['jobcount'] > 0:
-            status['status'] = self.PENDING
+            status['status'] = self.NEW
 
         for jobuuid, state in jobstatus.items():
             if state['status'] in self.COMPLETEDSTATES:
@@ -240,7 +240,9 @@ class JobQueue:
             else:
                 status['newcount'] += 1
 
-        if status['runningcount']:
+        if status['newcount']:
+            status['status'] = self.PENDING
+        elif status['runningcount']:
             status['status'] = self.RUNNING
         elif status['completecount']:
             status['status'] = self.COMPLETED
