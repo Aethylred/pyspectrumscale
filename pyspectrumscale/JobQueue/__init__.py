@@ -2,7 +2,6 @@
 Create a JobQueue that can manage and track requests sent to
 the Spectrum Scale API
 """
-import json
 from requests import PreparedRequest, Response
 from typing import Union
 from uuid import uuid4 as uuid
@@ -347,16 +346,16 @@ class JobQueue:
         else:
             # Run until completed
             while self.status()['status'] not in self.COMPLETEDSTATES:
-                if tick:
-                    print('.', end="")
                 submitresponse = self.submitjobs()
                 if completelog:
                     response.append(submitresponse)
                 else:
                     response = submitresponse
+                if tick:
+                    print(self.status()['status'][0], end="")
 
-            if tick:
-                print("!")
+        if tick:
+            print("!")
 
         if isinstance(response, list):
             if len(response) == 1:
