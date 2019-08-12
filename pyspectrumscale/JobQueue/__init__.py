@@ -5,6 +5,7 @@ the Spectrum Scale API
 from requests import PreparedRequest, Response
 from typing import Union
 from uuid import uuid4 as uuid
+from time import sleep
 from pyspectrumscale.Api import Api
 from pyspectrumscale.Api._utils import jsonprepreq, jsonresponse
 
@@ -284,6 +285,8 @@ class JobQueue:
                                         self.job(jobuuid)['requires']
                                     )
                                     self._jobs[jobuuid]['ok'] = False
+                            else:
+                                newsubmission = True
                         else:
                             self._jobs[jobuuid]['status'] = self.PENDING
                     else:
@@ -323,7 +326,9 @@ class JobQueue:
     def run(
         self,
         completelog: bool=False,
-        tick: bool=False
+        wait: int=0,
+        tick: bool=False,
+        tock: bool=False
     ):
         """
         @brief      { function_description }
@@ -337,25 +342,52 @@ class JobQueue:
         if completelog:
             response = []
 
+        if tick:
+            print(
+                "?",
+                end="",
+                flush=True
+            )
+
         if self._scaleapi._dryrun:
             # Do one submit
             if tick:
-                print('-')
+                print(
+                    "-",
+                    end="",
+                    flush=True
+                )
             response = self.submitjobs()
 
         else:
+            if tick:
+                print(
+                    "+",
+                    end="",
+                    flush=True
+                )
+
             # Run until completed
             while self.status()['status'] not in self.COMPLETEDSTATES:
                 submitresponse = self.submitjobs()
+                if tock:
+                    print("%s/n" % self.status(), flush=True)
+                    print("%s/n" % submitresponse, flush=True)
                 if completelog:
                     response.append(submitresponse)
                 else:
                     response = submitresponse
                 if tick:
-                    print(self.status()['status'][0], end="")
+                    print(
+                        self.status()['status'][0],
+                        end="",
+                        flush=True
+                    )
+                if wait:
+                    sleep(wait)
 
         if tick:
-            print("!")
+            print("!", flush=True)
 
         if isinstance(response, list):
             if len(response) == 1:
