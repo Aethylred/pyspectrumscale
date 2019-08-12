@@ -324,6 +324,7 @@ class JobQueue:
         self,
         completelog: bool=False,
         tick: bool=False
+        tock: bool=False
     ):
         """
         @brief      { function_description }
@@ -338,18 +339,35 @@ class JobQueue:
             response = []
 
         if tick:
-            print("?", flush=True)
+            print(
+                "?",
+                end="",
+                flush=True
+            )
 
         if self._scaleapi._dryrun:
             # Do one submit
             if tick:
-                print('-', flush=True)
+                print(
+                    "-",
+                    end="",
+                    flush=True
+                )
             response = self.submitjobs()
 
         else:
+            if tick:
+                print(
+                    "+",
+                    end="",
+                    flush=True
+                )
+
             # Run until completed
             while self.status()['status'] not in self.COMPLETEDSTATES:
                 submitresponse = self.submitjobs()
+                if tock:
+                    print("%s/n" % self.status())
                 if completelog:
                     response.append(submitresponse)
                 else:
