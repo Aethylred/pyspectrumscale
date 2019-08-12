@@ -285,6 +285,8 @@ class JobQueue:
                                         self.job(jobuuid)['requires']
                                     )
                                     self._jobs[jobuuid]['ok'] = False
+                            else:
+                                newsubmission = True
                         else:
                             self._jobs[jobuuid]['status'] = self.PENDING
                     else:
