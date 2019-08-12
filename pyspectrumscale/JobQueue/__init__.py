@@ -337,10 +337,13 @@ class JobQueue:
         if completelog:
             response = []
 
+        if tick:
+            print("?", flush=True)
+
         if self._scaleapi._dryrun:
             # Do one submit
             if tick:
-                print('-')
+                print('-', flush=True)
             response = self.submitjobs()
 
         else:
@@ -352,10 +355,14 @@ class JobQueue:
                 else:
                     response = submitresponse
                 if tick:
-                    print(self.status()['status'][0], end="")
+                    print(
+                        self.status()['status'][0],
+                        end="",
+                        flush=True
+                    )
 
         if tick:
-            print("!")
+            print("!", flush=True)
 
         if isinstance(response, list):
             if len(response) == 1:
