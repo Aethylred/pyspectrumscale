@@ -5,6 +5,7 @@ the Spectrum Scale API
 from requests import PreparedRequest, Response
 from typing import Union
 from uuid import uuid4 as uuid
+from time import sleep
 from pyspectrumscale.Api import Api
 from pyspectrumscale.Api._utils import jsonprepreq, jsonresponse
 
@@ -323,6 +324,7 @@ class JobQueue:
     def run(
         self,
         completelog: bool=False,
+        wait: int=0,
         tick: bool=False,
         tock: bool=False
     ):
@@ -367,7 +369,8 @@ class JobQueue:
             while self.status()['status'] not in self.COMPLETEDSTATES:
                 submitresponse = self.submitjobs()
                 if tock:
-                    print("%s/n" % self.status())
+                    print("%s/n" % self.status(), flush=True)
+                    print("%s/n" % submitresponse, flush=True)
                 if completelog:
                     response.append(submitresponse)
                 else:
@@ -378,6 +381,8 @@ class JobQueue:
                         end="",
                         flush=True
                     )
+                if wait:
+                    sleep(wait)
 
         if tick:
             print("!", flush=True)
