@@ -323,7 +323,7 @@ class JobQueue:
     def run(
         self,
         completelog: bool=False,
-        tick: bool=False
+        tick: bool=False,
         tock: bool=False
     ):
         """
