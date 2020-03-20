@@ -205,7 +205,7 @@ def preppost_quota(
 
     # Is soft block quota < hard block quota
     # and they both aren't 0
-    if blocksoftlimit is not None and blockhardlimit is not None:
+    if blocksoftlimit is not None or blockhardlimit is not None:
         if blocksoftint != 0 and blockhardint != 0:
             if blocksoftint >= blockhardint:
                 reason = (
@@ -221,7 +221,7 @@ def preppost_quota(
 
     # Is soft block quota < hard block quota
     # and they both aren't 0
-    if filessoftlimit is not None and fileshardlimit is not None:
+    if filessoftlimit is not None or fileshardlimit is not None:
         if filessoftint != 0 and fileshardint != 0:
             if filessoftint >= fileshardint:
                 reason = (
