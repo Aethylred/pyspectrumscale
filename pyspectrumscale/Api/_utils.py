@@ -110,30 +110,31 @@ def blocktoint(
     result = None
 
     # is block string valid
-    if validblockstr(blockstr):
-        # is it just a digit
-        if isinstance(blockstr, int):
-            result = blockstr
-        elif blockstr.isdigit():
-            result = int(blockstr)
-        elif blockstr[-1] in ['K', 'M', 'G', 'T']:
-            # Process
-            if blockstr[-1] == 'K':
-                result = int(float(blockstr[:-1]) * kibi)
-            elif blockstr[-1] == 'M':
-                result = int(float(blockstr[:-1]) * mebi)
-            elif blockstr[-1] == 'G':
-                result = int(float(blockstr[:-1]) * gibi)
-            elif blockstr[-1] == 'T':
-                result = int(float(blockstr[:-1]) * tebi)
-            elif blockstr[-1] == 'P':
-                result = int(float(blockstr[:-1]) * pebi)
-    else:
-        print(
-            "ERROR: %s is not a valid block string for spectrumscale" %
-            blockstr,
-            file=sys.stderr
-        )
+    if blockstr:
+        if validblockstr(blockstr):
+            # is it just a digit
+            if isinstance(blockstr, int):
+                result = blockstr
+            elif blockstr.isdigit():
+                result = int(blockstr)
+            elif blockstr[-1] in ['K', 'M', 'G', 'T']:
+                # Process
+                if blockstr[-1] == 'K':
+                    result = int(float(blockstr[:-1]) * kibi)
+                elif blockstr[-1] == 'M':
+                    result = int(float(blockstr[:-1]) * mebi)
+                elif blockstr[-1] == 'G':
+                    result = int(float(blockstr[:-1]) * gibi)
+                elif blockstr[-1] == 'T':
+                    result = int(float(blockstr[:-1]) * tebi)
+                elif blockstr[-1] == 'P':
+                    result = int(float(blockstr[:-1]) * pebi)
+        else:
+            print(
+                "ERROR: %s is not a valid block string for spectrumscale" %
+                blockstr,
+                file=sys.stderr
+            )
 
     return result
 
@@ -151,26 +152,27 @@ def inodetoint(
     result = None
 
     # is block string valid
-    if validinodestr(inodestr):
-        # is it just a digit
-        if isinstance(inodestr, int):
-            result = inodestr
-        elif inodestr.isdigit():
-            result = int(inodestr)
-        elif inodestr[-1] in ['K', 'M', 'G']:
-            # Process
-            if inodestr[-1] == 'K':
-                result = int(float(inodestr[:-1]) * kibi)
-            elif inodestr[-1] == 'M':
-                result = int(float(inodestr[:-1]) * mebi)
-            elif inodestr[-1] == 'G':
-                result = int(float(inodestr[:-1]) * gibi)
-    else:
-        print(
-            "ERROR: %s is not a valid file/inode string for spectrumscale" %
-            inodestr,
-            file=sys.stderr
-        )
+    if inodestr:
+        if validinodestr(inodestr):
+            # is it just a digit
+            if isinstance(inodestr, int):
+                result = inodestr
+            elif inodestr.isdigit():
+                result = int(inodestr)
+            elif inodestr[-1] in ['K', 'M', 'G']:
+                # Process
+                if inodestr[-1] == 'K':
+                    result = int(float(inodestr[:-1]) * kibi)
+                elif inodestr[-1] == 'M':
+                    result = int(float(inodestr[:-1]) * mebi)
+                elif inodestr[-1] == 'G':
+                    result = int(float(inodestr[:-1]) * gibi)
+        else:
+            print(
+                "ERROR: %s is not a valid file/inode string for spectrumscale" %
+                inodestr,
+                file=sys.stderr
+            )
 
     return result
 
