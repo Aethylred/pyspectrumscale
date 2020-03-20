@@ -205,35 +205,37 @@ def preppost_quota(
 
     # Is soft block quota < hard block quota
     # and they both aren't 0
-    if blocksoftlimit is not None or blockhardlimit is not None:
-        if blocksoftint != 0 and blockhardint != 0:
-            if blocksoftint >= blockhardint:
-                reason = (
-                    "Soft block limit (%s) is not"
-                    " less than block hard limit (%s)" %
-                    (
-                        blocksoftlimit,
-                        blockhardlimit
+    if blocksoftlimit is not None:
+        if blockhardlimit is not None:
+            if blocksoftint != 0 and blockhardint != 0:
+                if blocksoftint >= blockhardint:
+                    reason = (
+                        "Soft block limit (%s) is not"
+                        " less than block hard limit (%s)" %
+                        (
+                            blocksoftlimit,
+                            blockhardlimit
+                        )
                     )
-                )
-                validquota = False
-                reasons.append(reason)
+                    validquota = False
+                    reasons.append(reason)
 
     # Is soft block quota < hard block quota
     # and they both aren't 0
-    if filessoftlimit is not None or fileshardlimit is not None:
-        if filessoftint != 0 and fileshardint != 0:
-            if filessoftint >= fileshardint:
-                reason = (
-                    "Soft inode limit (%s) is not"
-                    " less than inode hard limit (%s)" %
-                    (
-                        filessoftlimit,
-                        fileshardlimit
+    if filessoftlimit is not None:
+        if fileshardlimit is not None:
+            if filessoftint != 0 and fileshardint != 0:
+                if filessoftint >= fileshardint:
+                    reason = (
+                        "Soft inode limit (%s) is not"
+                        " less than inode hard limit (%s)" %
+                        (
+                            filessoftlimit,
+                            fileshardlimit
+                        )
                     )
-                )
-                validquota = False
-                reasons.append(reason)
+                    validquota = False
+                    reasons.append(reason)
 
     if validquota:
         if fileset is not None:
