@@ -1,33 +1,69 @@
+include:
+#  - template: Code-Quality.gitlab-ci.yml
+#  - template: Security/Dependency-Scanning.gitlab-ci.yml
+#  - template: Security/License-Scanning.gitlab-ci.yml
+# This tests if a python module installs and the tests run
+#  - template: Python.gitlab-ci.yml
+
 stages:
-    - pylint
+    - analysis
+    - test
     - deploy
 
-pylint:
-    image: python:3.7
-    stage: pylint
-    script:
+# code_quality:
+#     # This takes ages, so do it last
+#     stage: .post
+
+# code_quality_html:
+#     # This takes ages, so do it last
+#     stage: .post
+#     extends: code_quality
+#     variables:
+#         REPORT_FORMAT: html
+#     artifacts:
+#         paths: [gl-code-quality-report.html]
+
+# Using https://pypi.org/project/pylint-gitlab/
+gitlab-pylint:
+    stage: analysis
+    image: python:3.7-slim
+    before_script:
+        - apt-get -qq update
+        - apt-get -qq install -y apache2 apache2-utils ssl-cert
+        - apt-get -qq install -y apache2-dev libapache2-mod-wsgi-py3
+        - apt-get -qq install -y libpq-dev
+        - pip install --upgrade pip
         - pip install -r requirements.txt
-        - pip install pylint anybadge pylint-exit --quiet
-        - pylint --version
-        - (pylint pyfreeipa --rcfile=.pylintrc --output-format=text | tee pylint.txt) || pylint-exit $?
-        - score=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' pylint.txt)
-        - echo "Pylint score was $score"
-        - anybadge --value=$score --file=public/pylint.svg pylint
+        - pip install pylint_gitlab
+        - mkdir -p public/badges public/lint
+        - echo undefined > public/badges/$CI_JOB_NAME.score
+    script:
+        - pylint --exit-zero --output-format=text $(find -type f -name "*.py" ! -path "**/.venv/**") | tee /tmp/pylint.txt
+        - sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' /tmp/pylint.txt > public/badges/$CI_JOB_NAME.score
+        - pylint --exit-zero --output-format=pylint_gitlab.GitlabCodeClimateReporter $(find -type f -name "*.py" ! -path "**/.venv/**") > codeclimate.json
+        - pylint --exit-zero --output-format=pylint_gitlab.GitlabPagesHtmlReporter $(find -type f -name "*.py" ! -path "**/.venv/**") > public/lint/index.html
+    after_script:
+        - anybadge --overwrite --label $CI_JOB_NAME --value=$(cat public/badges/$CI_JOB_NAME.score) --file=public/badges/$CI_JOB_NAME.svg 4=red 6=orange 8=yellow 10=green
+        - |
+            echo "Your score is: $(cat public/badges/$CI_JOB_NAME.score)"
     artifacts:
         paths:
-            - public/pylint.svg
+            - public
+        reports:
+            codequality: codeclimate.json
+    when: always
     tags:
         - docker
 
-# Gitlab pages service not yet configured
-#pages:
-#    stage: deploy
-#    script:
-#        - mkdir .public
-#        - cp -r * .public
-#        - mv .public public
-#    artifacts:
-#        paths:
-#            - public
-#    only:
-#        - master
+# pages:
+#     stage: deploy
+#     script:
+#         - echo "Do nothing..."
+#     artifacts:
+#         paths:
+#         - public
+#     only:
+#         refs:
+#             - develop
+#             - master
+#             - tags
