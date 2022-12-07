@@ -1,4 +1,4 @@
-include:
+# include:
 #  - template: Code-Quality.gitlab-ci.yml
 #  - template: Security/Dependency-Scanning.gitlab-ci.yml
 #  - template: Security/License-Scanning.gitlab-ci.yml
@@ -55,15 +55,15 @@ gitlab-pylint:
     tags:
         - docker
 
-# pages:
-#     stage: deploy
-#     script:
-#         - echo "Do nothing..."
-#     artifacts:
-#         paths:
-#         - public
-#     only:
-#         refs:
-#             - develop
-#             - master
-#             - tags
+pages:
+    stage: deploy
+    script:
+        - echo "Do nothing..."
+    artifacts:
+        paths:
+        - public
+    only:
+        refs:
+            - develop
+            - master
+            - tags
